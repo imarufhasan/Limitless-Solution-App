@@ -1,0 +1,27 @@
+import { LucideIcon } from 'lucide-react-native';
+import React from 'react';
+import { Text, TextInput, TextInputProps, View } from 'react-native';
+
+type InputFieldProps = TextInputProps & {
+    label: string;
+    Icon: LucideIcon;
+}
+
+const InputField = ({ label, Icon, ...props }: InputFieldProps) => {
+    return (
+        <View>
+            <Text className="text-[18px] font-medium text-[#0F0B18] mb-1">{label}</Text>
+            <View className="flex-row items-center bg-[#F0EAF3] rounded-xl px-4 py-1 mb-4">
+                <Icon size={20} color="#4F4F59" className="mr-1" />
+                <TextInput
+                    placeholderTextColor="#4F4F59"
+                    className="flex-1  text-md"
+                    {...props}
+                />
+
+            </View>
+        </View>
+    )
+}
+
+export default InputField
