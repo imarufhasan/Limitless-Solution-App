@@ -1,3 +1,4 @@
+import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
 import { router } from "expo-router";
 import { Lock, Mail, Phone, User } from "lucide-react-native";
@@ -20,7 +21,9 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
 
-  const handleRegister = () => { };
+  const handleRegister = () => { 
+    router.push("/(auth)/OtpVerification" as any);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -35,7 +38,7 @@ export default function Register() {
           {/* Header */}
           <Text className="text-2xl font-bold text-[#652D8B]  mt-2">
             Create Account
-          </Text>
+          </Text> 
           <Text className="text-sm text-[#4F4F59]">
             Join Scrap-Mate today
           </Text>
@@ -92,27 +95,22 @@ export default function Register() {
           >
             <View
               className={`w-4 h-4 rounded border ${agreed
-                  ? "bg-purple-600 border-purple-600"
-                  : "border-gray-400 bg-white"
+                ? "bg-[#652D8B] border-[#652D8B]"
+                : "border-gray-400 bg-white"
                 } items-center justify-center`}
             >
               {agreed && <Text className="text-white text-xs">✓</Text>}
             </View>
             <Text className="text-sm text-gray-500">
               I agree to{" "}
-              <Text className="text-purple-600 font-medium">
+              <Text className="text-[#652D8B] font-medium">
                 Terms & Conditions
               </Text>
             </Text>
           </TouchableOpacity>
 
           {/* Register Button */}
-          <TouchableOpacity
-            onPress={handleRegister}
-            className="bg-purple-600 py-4 rounded-full items-center mb-4"
-          >
-            <Text className="text-white font-bold text-base">Register</Text>
-          </TouchableOpacity>
+          <Button handlePress={handleRegister} text="Register" />
 
           {/* Login Link */}
           <TouchableOpacity
@@ -121,7 +119,7 @@ export default function Register() {
           >
             <Text className="text-sm text-gray-500">
               Already have an account?{" "}
-              <Text className="text-purple-600 font-medium">Login</Text>
+              <Text className="text-[#652D8B] font-medium">Login</Text>
             </Text>
           </TouchableOpacity>
         </ScrollView>
