@@ -13,7 +13,9 @@ const Button = ({ handlePress, text }: ButtonProps) => {
             onPress={handlePress}
             className="bg-[#652D8B] py-4 rounded-full items-center mb-4"
         >
-            <Text className="text-white font-bold text-base">{text}</Text>
+            <Text
+            style={{ fontFamily: "Inter_600SemiBold" }}
+            className="text-white  text-[18px]">{text}</Text>
         </TouchableOpacity>
     )
 }

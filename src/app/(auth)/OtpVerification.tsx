@@ -1,5 +1,6 @@
 import Button from '@/components/shared/Button'
 import OTPInput, { OTPInputHandle } from '@/components/shared/OtpInput'
+import { router } from 'expo-router'
 import React, { useRef } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -9,7 +10,8 @@ const OtpVerification = () => {
     const [otp, setOtp] = React.useState("");
 
     const handleOtp = () => {
-        console.log("OTP Entered:", otp);
+        // console.log("OTP Entered:", otp);
+        router.push("/(auth)/login")
         // Here you would typically verify the OTP with your backend
     }
 
