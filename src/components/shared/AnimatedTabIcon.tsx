@@ -29,7 +29,7 @@ export default function AnimatedTabIcon({ icon: Icon, color, size, focused, labe
       paddingVertical: 8,
       alignItems: "center",
       minWidth: 60,
-      minHeight: 55,
+      minHeight: 60,
     }}>
       <Animated.View style={{ transform: [{ scale }] }}>
         <Icon color={focused ? "#FFFFFF" : "#4F4F59"} size={size} />

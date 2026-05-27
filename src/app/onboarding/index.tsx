@@ -123,11 +123,11 @@ export default function Onboarding() {
       <View className="px-8 pb-12 gap-4">
         <TouchableOpacity
           onPress={handleNext}
-          className="bg-[#652D8B] py-4 rounded-full items-center"
+          className="bg-[#652D8B] py-4 rounded-full items-center mb-2"
         >
           <Text
             style={{ fontFamily: "Inter_600SemiBold" }}
-            className="text-white text-base"
+            className="text-white text-base "
           >
             {currentIndex === slides.length - 1 ? "Get Started" : "Next"}
           </Text>
