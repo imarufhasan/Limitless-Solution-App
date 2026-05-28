@@ -42,7 +42,7 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
       >
         <View className="flex-row items-center justify-between mt-3">
-          <View className="bg-white rounded-full shadow-lg ">
+          <View className="bg-white rounded-full overflow-hidden shadow-lg ">
             <Image source={require('@/assets/images/user.png')} className="w-14 h-14" />
           </View>
 
