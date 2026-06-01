@@ -10,7 +10,13 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = () => {
-    router.push("/(users)/home" as any);
+    if (email === "user@gmail.com" && password === "1234") {
+      router.push("/(users)/home" as any);
+    } else if (email === "employee@gmail.com" && password === "1234") {
+      router.push("/(employee)/home" as any);
+    } else {
+      alert("Invalid email or password");
+    }
   }
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -18,7 +24,7 @@ export default function Login() {
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView 
+        <ScrollView
           className="flex-1 px-5"
           showsVerticalScrollIndicator={false}
         >
@@ -62,14 +68,14 @@ export default function Login() {
 
 
           <TouchableOpacity className="self-end mb-4">
-            <Text className="text-[#EE2626]">Forget Password</Text> 
+            <Text className="text-[#EE2626]">Forget Password</Text>
           </TouchableOpacity>
           {/* Register Button */}
           <Button handlePress={handleLogin} text="Login" />
 
           {/* Login Link */}
           <TouchableOpacity
-            onPress={() => router.push("/(auth)/register" as any)} 
+            onPress={() => router.push("/(auth)/register" as any)}
             className="items-center mb-8"
           >
             <Text className="text-sm text-gray-500">

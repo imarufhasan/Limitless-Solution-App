@@ -70,14 +70,14 @@ export default function Track() {
         </View>
 
         {/* Tabs */}
-        <View className="flex-row bg-[#F0EAF3] rounded-sm p-2 mb-4 ">
+        <View className="flex-row bg-[#F0EAF3] rounded-sm  mb-4 ">
           {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
               onPress={() => setActiveTab(tab)}
               style={{
                 flex: 1,
-                paddingVertical: 12,
+                paddingVertical: 14,
                 borderRadius: 2,
                 alignItems: 'center',
                 backgroundColor: activeTab === tab ? "#652D8B" : "transparent",

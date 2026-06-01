@@ -24,12 +24,12 @@ export default function AnimatedTabIcon({ icon: Icon, color, size, focused, labe
   return (
     <View style={{
       backgroundColor: focused ? "#652D8B" : "transparent",
-      borderRadius: 16,
+      borderRadius: 12,
       paddingHorizontal: 5,
-      paddingVertical: 8,
+      paddingVertical: 10,
       alignItems: "center",
       minWidth: 60,
-      minHeight: 60,
+      // minHeight: 60,
     }}>
       <Animated.View style={{ transform: [{ scale }] }}>
         <Icon color={focused ? "#FFFFFF" : "#4F4F59"} size={size} />
