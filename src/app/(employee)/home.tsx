@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { BellIcon, Calendar, Car, MapPin, MessageCircle, Phone } from 'lucide-react-native';
 import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -115,7 +116,7 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
 
       {/* Buttons */}
       <View style={{ flexDirection: 'row', gap: 12 }}>
-        <TouchableOpacity style={{
+        <TouchableOpacity onPress={() => router.push("/(trackPickup)/pickupDetails" as any)} style={{
           flex: 1,
           paddingVertical: 12,
           borderRadius: 50,
