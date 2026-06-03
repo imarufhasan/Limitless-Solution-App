@@ -34,7 +34,7 @@ export default function ProfileSetting() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40 }}
+          contentContainerStyle={{ paddingBottom: 60 }}
         >
           {/* Avatar */}
           <View style={{ alignItems: 'center', marginBottom: 32 }}>
@@ -158,6 +158,7 @@ export default function ProfileSetting() {
             paddingVertical: 16,
             borderRadius: 50,
             alignItems: 'center',
+            marginBottom: 40,
           }}>
             <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: 'white' }}>
               Save

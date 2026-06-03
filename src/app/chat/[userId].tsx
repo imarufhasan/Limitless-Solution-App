@@ -19,7 +19,7 @@ const initialMessages: Message[] = [
   { id: "5", text: "Yes, everything is ready. The car is parked outside.", time: "10:33 AM", isMine: true },
 ];
 
-export default function Support() {
+export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const flatListRef = useRef<any>(null);

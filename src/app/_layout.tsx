@@ -35,6 +35,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="onboarding/index" />
         <Stack.Screen name="(settings)" />
+        <Stack.Screen name="chat" />
       </Stack>
     </SafeAreaProvider>
   );

@@ -4,12 +4,12 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const menuItems = [
-  { id: "1", title: "Profile Setting", icon: User, onPress: () => router.push("/profile-setting" as any) },
-  { id: "2", title: "Change password", icon: Lock, onPress: () => router.push("/change-password" as any) },
-  { id: "3", title: "Support", icon: HelpCircle, onPress: () => router.push("/support" as any) },
-  { id: "4", title: "About Us", icon: Globe, onPress: () => router.push("/about" as any) },
-  { id: "5", title: "Privacy Policy", icon: Shield, onPress: () => router.push("/privacy" as any) },
-  { id: "6", title: "Terms and Conditions", icon: ScrollText, onPress: () => router.push("/terms" as any) },
+  { id: "1", title: "Profile Setting", icon: User, onPress: () => router.push("/(settings)/editProfile" as any) },
+  { id: "2", title: "Change password", icon: Lock, onPress: () => router.push("/(settings)/changePasswordFromSettings" as any) },
+  { id: "3", title: "Support", icon: HelpCircle, onPress: () => router.push("/(settings)/support" as any) },
+  { id: "4", title: "About Us", icon: Globe, onPress: () => router.push("/(settings)/about-us" as any) },
+  { id: "5", title: "Privacy Policy", icon: Shield, onPress: () => router.push("/(settings)/privacyPolicy" as any) },
+  { id: "6", title: "Terms and Conditions", icon: ScrollText, onPress: () => router.push("/(settings)/termsCondition" as any) },
 ];
 
 export default function Profile() {

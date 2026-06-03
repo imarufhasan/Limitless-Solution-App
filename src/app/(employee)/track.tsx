@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Calendar, MapPin, MessageCircle, Phone, Truck } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
@@ -122,14 +123,22 @@ export default function EmployeeTrack() {
           renderItem={({ item }) => {
             const config = statusConfig[item.status];
             return (
-              <View style={{
-                backgroundColor: 'white',
-                borderRadius: 16,
-                padding: 16,
-                marginBottom: 12,
-                borderWidth: 1,
-                borderColor: '#F3F4F6',
-              }}>
+              <TouchableOpacity
+                activeOpacity={item.status === "Pending" ? 0.7 : 1}
+                onPress={() => {
+                  if (item.status === "Pending") {
+                    router.push("/(trackPickup)/pendingPickup" as any);
+                  }
+                }}
+                style={{
+                  backgroundColor: 'white',
+                  borderRadius: 16,
+                  padding: 16,
+                  marginBottom: 12,
+                  borderWidth: 1,
+                  borderColor: '#F3F4F6',
+                }}
+              >
                 {/* Top Row */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
                   <Image
@@ -191,32 +200,36 @@ export default function EmployeeTrack() {
                 {/* Ongoing Buttons */}
                 {item.status === "Ongoing" && (
                   <View style={{ flexDirection: 'row', gap: 12 }}>
-                    <TouchableOpacity style={{
-                      flex: 1,
-                      paddingVertical: 12,
-                      borderRadius: 50,
-                      alignItems: 'center',
-                      borderWidth: 1,
-                      borderColor: '#E5E7EB',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      gap: 6,
-                    }}>
+                    <TouchableOpacity
+                      onPress={() => router.push("/(trackPickup)/pendingPickup" as any)}
+                      style={{
+                        flex: 1,
+                        paddingVertical: 12,
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        borderWidth: 1,
+                        borderColor: '#E5E7EB',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        gap: 6,
+                      }}>
                       <Truck size={16} color="#374151" />
                       <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#374151' }}>
                         Track
                       </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{
-                      flex: 1,
-                      paddingVertical: 12,
-                      borderRadius: 50,
-                      alignItems: 'center',
-                      backgroundColor: '#652D8B',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      gap: 6,
-                    }}>
+                    <TouchableOpacity
+                      onPress={() => router.push(`/chat/${item.id}` as any)}
+                      style={{
+                        flex: 1,
+                        paddingVertical: 12,
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        backgroundColor: '#652D8B',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        gap: 6,
+                      }}>
                       <MessageCircle size={16} color="white" />
                       <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
                         Chat
@@ -224,7 +237,7 @@ export default function EmployeeTrack() {
                     </TouchableOpacity>
                   </View>
                 )}
-              </View>
+              </TouchableOpacity>
             );
           }}
         />

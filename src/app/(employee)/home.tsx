@@ -132,7 +132,7 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
             Track
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{
+        <TouchableOpacity onPress={() => router.push(`/chat/${item.id}` as any)} style={{
           flex: 1,
           paddingVertical: 12,
           borderRadius: 50,

@@ -21,7 +21,7 @@ const Home = () => {
       title: "Calculate Value",
       description: "Instant scrap value estimate",
       icon: Calculator,
-      onPress: () => router.push("/calculate" as any),
+      onPress: () => router.push("/(users)/calculator" as any),
     },
   ];
 

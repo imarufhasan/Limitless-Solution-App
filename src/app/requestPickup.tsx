@@ -1,17 +1,18 @@
+import RequestSubmittedModal from '@/components/RequestSubmittedModal';
 import BackButton from '@/components/shared/BackButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
-import { Calendar, Car, FileText, Image as ImageIcon } from 'lucide-react-native';
+import { Calendar, FileText, Image as ImageIcon } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-export default function SellYourCar() {
+export default function requestPickup() {
     const [date, setDate] = useState<Date>(new Date());
     const [showPicker, setShowPicker] = useState(false);
-    const [vin, setVin] = useState("");
+    const [showSubmitted, setShowSubmitted] = useState(false);
     const [notes, setNotes] = useState("");
     const [delivery, setDelivery] = useState("dropoff");
     const [images, setImages] = useState<string[]>([]);
@@ -32,7 +33,7 @@ export default function SellYourCar() {
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
-           mediaTypes: ['images'] as ImagePicker.MediaType[],
+            mediaTypes: ['images'] as ImagePicker.MediaType[],
             allowsMultipleSelection: true,
             quality: 0.8,
         });
@@ -46,42 +47,13 @@ export default function SellYourCar() {
     return (
         <SafeAreaView className="flex-1 bg-[#F8F6FA]">
             <View className="flex-1 px-4">
-                <BackButton title="Sell Your Car" />
+                <BackButton title="Request Pickup" />
                 <ScrollView
                     className="flex-1"
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 20 }}
                 >
-                    {/* Hero */}
-                    <View className="items-center py-4">
-                        <View className="w-16 h-16 rounded-full bg-purple-100 items-center justify-center mb-3">
-                            <Car size={32} color="#652D8B" />
-                        </View>
-                        <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-xl text-[#0F0B18] mb-1">
-                            Sell Your Car
-                        </Text>
-                        <Text style={{ fontFamily: "Inter_400Regular" }} className="text-sm text-gray-500 text-center">
-                            Enter your vehicle details to receive a quote
-                        </Text>
-                    </View>
 
-                    {/* VIN Number */}
-                    <View className="mb-4">
-                        <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18] mb-2">
-                            VIN Number
-                        </Text>
-                        <TextInput
-                            placeholder="1HGBH41JXMN109188"
-                            placeholderTextColor="#9CA3AF"
-                            value={vin}
-                            onChangeText={setVin}
-                            style={{ fontFamily: "Inter_400Regular" }}
-                            className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-[#0F0B18]"
-                        />
-                        <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mt-1">
-                            Enter the 17-character Vehicle Identification Number
-                        </Text>
-                    </View>
 
                     {/* Preferred Date */}
                     <View className="mb-4">
@@ -236,35 +208,26 @@ export default function SellYourCar() {
                         )}
                     </View>
 
-                    {/* What happens next */}
-                    <View className="bg-[#EFF6FF] border border-[#BEDBFF] rounded-xl p-4 mb-4">
-                        <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#1C398E] mb-3">
-                            What happens next?
-                        </Text>
-                        {[
-                            "Our team will review your VIN and vehicle details",
-                            "You'll receive a quote within 24 hours",
-                            "Accept the quote and schedule pickup or drop-off",
-                        ].map((item, i) => (
-                            <View key={i} className="flex-row items-center gap-2 mb-2">
-                                <View className="w-1.5 h-1.5 rounded-full bg-[#155DFC]" />
-                                <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-[#193CB8] flex-1">
-                                    {item}
-                                </Text>
-                            </View>
-                        ))}
-                    </View>
+
                 </ScrollView>
             </View>
 
             {/* Submit Button */}
             <View className="px-4 pb-2 bg-[#F8F6FA]">
-                <TouchableOpacity onPress={() => router.push("/(users)/track") } className="bg-[#652D8B] py-4 rounded-full items-center">
+                <TouchableOpacity
+                    onPress={() => setShowSubmitted(true)}
+                    className="bg-[#652D8B] py-4 rounded-full items-center"
+                >
                     <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-white text-base">
                         Submit Request
                     </Text>
                 </TouchableOpacity>
             </View>
+            <RequestSubmittedModal
+                visible={showSubmitted}
+                onTrack={() => router.push("/(users)/track" as any)}
+                onHome={() => router.push("/(users)/home" as any)}
+            />
         </SafeAreaView>
     );
 }
