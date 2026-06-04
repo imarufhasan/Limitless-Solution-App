@@ -147,7 +147,7 @@ export default function Calculator() {
                         fontSize: 13,
                         color: part.unit === "kg" ? "white" : "#6B7280",
                       }}>
-                        kg (${part.kgPrice}/kg)
+                        lbs (${part.kgPrice}/lbs)
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -219,7 +219,7 @@ export default function Calculator() {
           }}>
             <CalculatorIcon size={18} color="white" />
             <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: 'white' }}>
-              Calculate Value
+              Estimate Value
             </Text>
           </TouchableOpacity>
         </View>

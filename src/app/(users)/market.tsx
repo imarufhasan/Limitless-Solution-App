@@ -8,13 +8,13 @@ export default function Market() {
   const [search, setSearch] = useState("");
 
   const metals = [
-    { id: "1", name: "Iron", unit: "Per kg", price: "$150" },
-    { id: "2", name: "Copper", unit: "Per kg", price: "$850" },
-    { id: "3", name: "Aluminum", unit: "Per kg", price: "$220" },
-    { id: "4", name: "Steel", unit: "Per kg", price: "$180" },
-    { id: "5", name: "Steel", unit: "Per kg", price: "$150" },
-    { id: "6", name: "Steel", unit: "Per kg", price: "$120" },
-    { id: "7", name: "Steel", unit: "Per kg", price: "$180" },
+    { id: "1", name: "Iron", unit: "Per lbs", price: "$150" },
+    { id: "2", name: "Copper", unit: "Per lbs", price: "$850" },
+    { id: "3", name: "Aluminum", unit: "Per  lbs", price: "$220" },
+    { id: "4", name: "Steel", unit: "Per lbs", price: "$180" },
+    { id: "5", name: "Steel", unit: "Per lbs", price: "$150" },
+    { id: "6", name: "Steel", unit: "Per lbs", price: "$120" },
+    { id: "7", name: "Steel", unit: "Per lbs", price: "$180" },
   ];
 
   const filteredMetals = metals.filter((metal) =>

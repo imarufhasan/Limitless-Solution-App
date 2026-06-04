@@ -68,7 +68,7 @@ export default function CalculatorResultModal({ visible, onClose, total, partsCo
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>
-                Weight (55 kg):
+                Weight (55 lbs):
               </Text>
               <Text style={{ fontFamily: "Inter_500Medium", fontSize: 14, color: '#0F0B18' }}>
                 $2,750

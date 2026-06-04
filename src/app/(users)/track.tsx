@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Calendar, Clock, FileText, MapPin, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
@@ -239,7 +240,7 @@ export default function Track() {
 
                 {item.status === "Accepted" && (
                   <View style={{ flexDirection: 'row', gap: 12 }}>
-                    <TouchableOpacity style={{
+                    <TouchableOpacity onPress={()=> router.push("/trackPick" as any)} style={{
                       flex: 1,
                       paddingVertical: 12,
                       borderRadius: 30,

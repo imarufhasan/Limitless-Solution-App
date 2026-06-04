@@ -39,7 +39,7 @@ export default function RequestSubmittedModal({ visible, onTrack, onHome }: Prop
             justifyContent: 'center',
             marginBottom: 16,
           }}>
-            <CheckCircle size={40} color="white" fill="white" />
+            <CheckCircle size={40} color="white"  />
           </View>
 
           {/* Title */}

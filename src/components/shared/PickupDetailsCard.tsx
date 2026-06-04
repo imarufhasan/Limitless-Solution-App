@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ArrowLeft, MessageCircle, Package, User } from 'lucide-react-native';
+import { ArrowLeft, MessageSquareMore, Package, User } from 'lucide-react-native';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,19 +18,19 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 className="flex-1"
-                contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+                contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 20 }}
             >
                 {/* Header */}
                 <View className="flex-row items-center justify-between py-2">
                     <TouchableOpacity
                         onPress={() => router.back()}
-                        className="w-9 h-9 rounded-full bg-[#652D8B] items-center justify-center"
+                        className="w-12 h-12 rounded-xl bg-[#652D8B] items-center justify-center"
                     >
-                        <ArrowLeft size={20} color="white" />
+                        <ArrowLeft size={25} color="white" />
                     </TouchableOpacity>
 
-                    <View className="items-center">
-                        <Text style={{ fontFamily: "Inter_700Bold" }} className="text-lg text-[#0F0B18]">
+                    <View>
+                        <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-[#0F0B18]">
                             Pickup Details
                         </Text>
                         <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400">
@@ -39,23 +39,23 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                     </View>
 
                     <View className="bg-blue-50 px-3 py-1 rounded-full">
-                        <Text style={{ fontFamily: "Inter_500Medium" }} className="text-xs text-blue-700">
+                        <Text style={{ fontFamily: "Inter_500Medium" }} className="text-xs text-[#1447E6]">
                             {status}
                         </Text>
                     </View>
                 </View>
 
                 {/* Customer Information */}
-                <View className="bg-white rounded-2xl p-4 mb-3 border border-gray-100">
+                <View className="bg-white rounded-2xl p-4 mb-3 border border-gray-300">
                     <View className="flex-row justify-between items-center mb-4">
                         <View className="flex-row items-center gap-2">
-                            <User size={18} color="#652D8B" />
+                            <User size={22} color="#652D8B" />
                             <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">
                                 Customer Information
                             </Text>
                         </View>
-                        <TouchableOpacity className="w-9 h-9 rounded-full border border-gray-200 items-center justify-center">
-                            <MessageCircle size={16} color="#652D8B" />
+                        <TouchableOpacity onPress={()=> router.push("/chat/[userId]")} className="w-9 h-9 rounded-full  border border-[#652D8B] items-center justify-center">
+                            <MessageSquareMore size={20} color="#652D8B" />
                         </TouchableOpacity>
                     </View>
 
@@ -88,7 +88,7 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                 </View>
 
                 {/* Scrap Details */}
-                <View className="bg-white rounded-2xl p-4 border border-gray-100 mb-4">
+                <View className="bg-white rounded-2xl p-4 border border-gray-300 mb-4">
                     <View className="flex-row items-center gap-2 mb-4">
                         <Package size={18} color="#652D8B" />
                         <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">
@@ -160,7 +160,7 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                     ) : (
                         <TouchableOpacity
                             onPress={onPress}
-                            className="bg-[#652D8B] py-3 rounded-xl flex-row items-center justify-center gap-2 mb-4"
+                            className="bg-[#652D8B] py-3  rounded-xl flex-row items-center justify-center gap-2 mb-4"
                         >
                             <ButtonIcon size={16} color="white" />
                             <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-white text-sm">

@@ -123,43 +123,7 @@ export default function requestPickup() {
                         </View>
                     </View>
 
-                    {/* Delivery Method */}
-                    <View className="mb-4">
-                        <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18] mb-2">
-                            Delivery Method
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => setDelivery("dropoff")}
-                            className={`flex-row items-center p-4 rounded-xl mb-2 border ${delivery === "dropoff" ? "border-purple-400 bg-purple-50" : "border-gray-200 bg-white"
-                                }`}
-                        >
-                            <View className={`w-5 h-5 rounded-full border-2 mr-3 items-center justify-center ${delivery === "dropoff" ? "border-purple-600" : "border-gray-300"
-                                }`}>
-                                {delivery === "dropoff" && <View className="w-2.5 h-2.5 rounded-full bg-purple-600" />}
-                            </View>
-                            <View className="flex-1">
-                                <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">Drop-off</Text>
-                                <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-500">Bring your car to our location</Text>
-                                <Text style={{ fontFamily: "Inter_500Medium" }} className="text-xs text-green-500 mt-0.5">Higher price</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={() => setDelivery("pickup")}
-                            className={`flex-row items-center p-4 rounded-xl border ${delivery === "pickup" ? "border-purple-400 bg-purple-50" : "border-gray-200 bg-white"
-                                }`}
-                        >
-                            <View className={`w-5 h-5 rounded-full border-2 mr-3 items-center justify-center ${delivery === "pickup" ? "border-purple-600" : "border-gray-300"
-                                }`}>
-                                {delivery === "pickup" && <View className="w-2.5 h-2.5 rounded-full bg-purple-600" />}
-                            </View>
-                            <View className="flex-1">
-                                <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">Pickup</Text>
-                                <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-500">We'll pick up from your location</Text>
-                                <Text style={{ fontFamily: "Inter_500Medium" }} className="text-xs text-orange-400 mt-0.5">Convenient service</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                  
 
                     {/* Upload Photo */}
                     {/* Upload Photo */}

@@ -24,6 +24,7 @@ export default function UserTabs() {
                 },
                 tabBarActiveTintColor: "#652D8B",
                 tabBarInactiveTintColor: "#4F4F59",
+                
             }}
         >
             <Tabs.Screen name="home" options={{

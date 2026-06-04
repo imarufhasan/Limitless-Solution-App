@@ -18,7 +18,7 @@ const Home = () => {
     },
     {
       id: "2",
-      title: "Calculate Value",
+      title: "Estimate Value",
       description: "Instant scrap value estimate",
       icon: Calculator,
       onPress: () => router.push("/(users)/calculator" as any),
@@ -26,11 +26,11 @@ const Home = () => {
   ];
 
   const metals = [
-    { id: "1", name: "Iron", unit: "Per kg", price: "$150" },
-    { id: "2", name: "Copper", unit: "Per kg", price: "$850" },
-    { id: "3", name: "Aluminum", unit: "Per kg", price: "$220" },
-    { id: "4", name: "Steel", unit: "Per kg", price: "$180" },
-    { id: "5", name: "Steel", unit: "Per kg", price: "$180" },
+    { id: "1", name: "Iron", unit: "Per lbs", price: "$150" },
+    { id: "2", name: "Copper", unit: "Per lbs", price: "$850" },
+    { id: "3", name: "Aluminum", unit: "Per lbs", price: "$220" },
+    { id: "4", name: "Steel", unit: "Per lbs", price: "$180" },
+    { id: "5", name: "Steel", unit: "Per lbs", price: "$180" },
   ];
 
 

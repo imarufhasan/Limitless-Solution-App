@@ -86,6 +86,10 @@ export default function Profile() {
 
         {/* Logout */}
         <TouchableOpacity
+          onPress={() => {
+            // Handle logout logic
+            router.push("/(auth)/login");
+          }}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
