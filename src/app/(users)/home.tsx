@@ -1,6 +1,5 @@
 import MetalPriceCard from '@/components/shared/MetalPriceCard'
 import Carousel from '@/components/ui/Carousel'
-import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { ArrowRight, BellIcon, Calculator, Car, Zap } from 'lucide-react-native'
 import React from 'react'
@@ -26,11 +25,11 @@ const Home = () => {
   ];
 
   const metals = [
-    { id: "1", name: "Iron", unit: "Per lbs", price: "$150" },
-    { id: "2", name: "Copper", unit: "Per lbs", price: "$850" },
-    { id: "3", name: "Aluminum", unit: "Per lbs", price: "$220" },
-    { id: "4", name: "Steel", unit: "Per lbs", price: "$180" },
-    { id: "5", name: "Steel", unit: "Per lbs", price: "$180" },
+    { id: "1", name: "Iron", unit: "Per lb", price: "$150" },
+    { id: "2", name: "Copper", unit: "Per lb", price: "$850" },
+    { id: "3", name: "Aluminum", unit: "Per lb", price: "$220" },
+    { id: "4", name: "Steel", unit: "Per lb", price: "$180" },
+    { id: "5", name: "Steel", unit: "Per lb", price: "$180" },
   ];
 
 
@@ -41,17 +40,17 @@ const Home = () => {
         className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-row items-center justify-between mt-3">
-          <View className="bg-white rounded-full overflow-hidden shadow-lg ">
+        <View className="flex-row items-center justify-end mt-3">
+          {/* <View className="bg-white rounded-full overflow-hidden shadow-lg ">
             <Image source={require('@/assets/images/user.png')} className="w-14 h-14" />
-          </View>
+          </View> */}
 
-          <View className=" mx-auto bg-white px-6 py-2 rounded-full ">
+          {/* <View className=" mx-auto bg-white px-6 py-2 rounded-full ">
             <Text className="text-[#652D8B] mx-auto">Total Earnings</Text>
             <Text className="text-[18px] mx-auto font-bold ">$1,250.00</Text>
-          </View>
+          </View> */}
           <TouchableOpacity onPress={() => router.push("/notifications")}>
-            <View className="bg-white rounded-full p-4 shadow-lg">
+            <View className="bg-white rounded-full p-3 shadow-lg">
               <BellIcon size={24} color="#4F4F59" />
             </View>
           </TouchableOpacity>

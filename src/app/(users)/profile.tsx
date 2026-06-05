@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const menuItems = [
@@ -16,9 +16,11 @@ export default function Profile() {
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1  px-4"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{
+          paddingBottom: 20, 
+        }}
       >
         {/* Header */}
         <Text
@@ -29,33 +31,13 @@ export default function Profile() {
         </Text>
 
         {/* Avatar */}
-        <View className="items-center mb-8">
-          <View style={{
-            width: 90,
-            height: 90,
-            borderRadius: 45,
-            overflow: 'hidden',
-            borderWidth: 1,
-            borderColor: '#F0EAF3',
-          }}>
-            <Image
-              source={require('@/assets/images/user.png')}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="cover"
-            />
-          </View>
-          <Text
-            style={{ fontFamily: "Inter_600SemiBold" }}
-            className="text-lg text-[#0F0B18] mt-3"
-          >
-            Aaron
-          </Text>
-        </View>
+
 
         {/* Menu Items */}
         <View style={{
           overflow: 'hidden',
           marginBottom: 35,
+          width: '100%',
         }}>
           {menuItems.map((item, i) => {
             const Icon = item.icon;
@@ -99,6 +81,7 @@ export default function Profile() {
             borderColor: '#652D8B',
             borderRadius: 20,
             paddingVertical: 14,
+            width: '100%',
           }}
         >
           <LogOut size={18} color="#652D8B" />

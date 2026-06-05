@@ -132,47 +132,28 @@ export default function Calculator() {
                     Unit
                   </Text>
                   <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-                    <TouchableOpacity
-                      onPress={() => updateUnit(part.id, "kg")}
+                    <View
                       style={{
                         flex: 1,
                         paddingVertical: 10,
                         borderRadius: 10,
                         alignItems: 'center',
-                        backgroundColor: part.unit === "kg" ? "#652D8B" : "#F3F4F6",
+                        backgroundColor: "#652D8B",
                       }}
                     >
                       <Text style={{
                         fontFamily: "Inter_500Medium",
                         fontSize: 13,
-                        color: part.unit === "kg" ? "white" : "#6B7280",
+                        color: "white",
                       }}>
-                        lbs (${part.kgPrice}/lbs)
+                        lb (${part.kgPrice}/ lb)
                       </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => updateUnit(part.id, "pc")}
-                      style={{
-                        flex: 1,
-                        paddingVertical: 10,
-                        borderRadius: 10,
-                        alignItems: 'center',
-                        backgroundColor: part.unit === "pc" ? "#652D8B" : "#F3F4F6",
-                      }}
-                    >
-                      <Text style={{
-                        fontFamily: "Inter_500Medium",
-                        fontSize: 13,
-                        color: part.unit === "pc" ? "white" : "#6B7280",
-                      }}>
-                        pc (${part.pcPrice}/pc)
-                      </Text>
-                    </TouchableOpacity>
+                    </View>
                   </View>
 
                   {/* Quantity */}
                   <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: '#9CA3AF', marginBottom: 8 }}>
-                    Quantity ({part.unit})
+                    Quantity 
                   </Text>
                   <TextInput
                     value={part.quantity.toString()}

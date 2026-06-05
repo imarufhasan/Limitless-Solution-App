@@ -55,7 +55,7 @@ export default function Register() {
           <InputField
             label="Name"
             Icon={User}
-            placeholder="Aaron"
+            placeholder="Jhon"
             value={name}
             onChangeText={setName}
           />
@@ -63,7 +63,7 @@ export default function Register() {
           <InputField
             label="Email"
             Icon={Mail}
-            placeholder="name@example.com"
+            placeholder="jhon@example.com"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"

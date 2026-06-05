@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const menuItems = [
@@ -30,7 +30,7 @@ export default function Profile() {
 
         {/* Avatar */}
         <View className="items-center mb-8">
-          <View style={{
+          {/* <View style={{
             width: 90,
             height: 90,
             borderRadius: 45,
@@ -43,7 +43,7 @@ export default function Profile() {
               style={{ width: '100%', height: '100%' }}
               resizeMode="cover"
             />
-          </View>
+          </View> */}
           <Text
             style={{ fontFamily: "Inter_600SemiBold" }}
             className="text-lg text-[#0F0B18] mt-3"

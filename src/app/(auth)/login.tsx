@@ -49,7 +49,7 @@ export default function Login() {
           <InputField
             label="Email"
             Icon={Mail}
-            placeholder="name@example.com"
+            placeholder="jhon@example.com"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"

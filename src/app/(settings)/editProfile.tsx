@@ -1,6 +1,6 @@
 import BackButton from '@/components/shared/BackButton';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, MapPin, User } from 'lucide-react-native';
+import { MapPin, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -52,7 +52,7 @@ export default function ProfileSetting() {
                   resizeMode="cover"
                 />
               </View>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={pickImage}
                 style={{
                   position: 'absolute',
@@ -69,7 +69,7 @@ export default function ProfileSetting() {
                 }}
               >
                 <Camera size={14} color="white" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
 
