@@ -1,3 +1,4 @@
+import { persistor, store } from "@/redux/store";
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -10,6 +11,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -26,17 +30,21 @@ export default function RootLayout() {
     }
   }, [fontsLoaded, fontError]);
 
-  if (!fontsLoaded && !fontError) return null;
-
   return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="onboarding/index" />
-        <Stack.Screen name="(settings)" />
-        <Stack.Screen name="chat" />
-      </Stack>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          {(fontsLoaded || fontError) && (
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="onboarding/index" />
+              <Stack.Screen name="(settings)" />
+              <Stack.Screen name="chat" />
+            </Stack>
+          )}
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 }
