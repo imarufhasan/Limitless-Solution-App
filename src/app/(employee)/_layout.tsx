@@ -1,6 +1,6 @@
 import AnimatedTabIcon from '@/components/shared/AnimatedTabIcon';
 import { Tabs } from 'expo-router';
-import { Home, Package, User } from 'lucide-react-native';
+import { Home, MessageCircle, Package, User } from 'lucide-react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -38,7 +38,7 @@ export default function UserTabs() {
             }} />
             <Tabs.Screen name="chat" options={{
                 tabBarIcon: ({ color, size, focused }) => (
-                    <AnimatedTabIcon icon={Package} color={color} size={size} focused={focused} label="Chat" />
+                    <AnimatedTabIcon icon={MessageCircle} color={color} size={size} focused={focused} label="Chat" />
                 )
             }} />
            

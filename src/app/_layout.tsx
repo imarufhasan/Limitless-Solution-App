@@ -10,6 +10,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -34,6 +35,7 @@ export default function RootLayout() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
+          <KeyboardProvider>
           <StatusBar style="dark" />
           {(fontsLoaded || fontError) && (
             <Stack screenOptions={{ headerShown: false }}>
@@ -43,6 +45,7 @@ export default function RootLayout() {
               <Stack.Screen name="chat" />
             </Stack>
           )}
+          </KeyboardProvider>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>

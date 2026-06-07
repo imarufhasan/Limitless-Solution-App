@@ -6,14 +6,15 @@ import {
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import {
+  FlatList,
   Image,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Message = {
   id: string;
@@ -58,7 +59,7 @@ const initialMessages: Message[] = [
 export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState('');
-
+  const insets = useSafeAreaInsets();
   const flatListRef = useRef<any>(null);
 
   const sendMessage = () => {
@@ -75,7 +76,6 @@ export default function ChatScreen() {
     };
 
     setMessages((prev) => [...prev, newMessage]);
-
     setInput('');
 
     setTimeout(() => {
@@ -84,61 +84,45 @@ export default function ChatScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top }}>
 
       {/* Header */}
       <View className="bg-[#652D8B] px-4 py-3 flex-row items-center gap-3">
         <TouchableOpacity onPress={() => router.back()}>
           <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
-
         <Image
           source={require('@/assets/images/user.png')}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-          }}
+          style={{ width: 40, height: 40, borderRadius: 20 }}
         />
-
         <View>
-          <Text
-            style={{ fontFamily: 'Inter_600SemiBold' }}
-            className="text-white text-base"
-          >
+          <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-white text-base">
             Aaron
           </Text>
-
-          <Text
-            style={{ fontFamily: 'Inter_400Regular' }}
-            className="text-purple-200 text-xs"
-          >
+          <Text style={{ fontFamily: 'Inter_400Regular' }} className="text-purple-200 text-xs">
             Customer
           </Text>
         </View>
       </View>
-    
+
+      {/* KeyboardAvoidingView from react-native-keyboard-controller */}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
 
         {/* Messages */}
-        <KeyboardAwareFlatList
+        <FlatList
           ref={flatListRef}
           data={messages}
-          enableOnAndroid
           style={{ flex: 1 }}
-          extraScrollHeight={20}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
           onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({
-              animated: true,
-            })
+            flatListRef.current?.scrollToEnd({ animated: true })
           }
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingVertical: 16,
             gap: 8,
-            flexGrow: 1,
           }}
           ListHeaderComponent={
             <Text
@@ -150,30 +134,29 @@ export default function ChatScreen() {
           }
           renderItem={({ item }) => (
             <View
-              className={`flex-row ${item.isMine ? 'justify-end' : 'justify-start'
-                }`}
+              className={`flex-row ${item.isMine ? 'justify-end' : 'justify-start'}`}
             >
               <View
                 style={{ maxWidth: '75%' }}
-                className={`px-4 py-3 rounded-2xl ${item.isMine
+                className={`px-4 py-3 rounded-2xl ${
+                  item.isMine
                     ? 'bg-[#652D8B] rounded-tr-sm'
                     : 'bg-white border border-gray-100 rounded-tl-sm'
-                  }`}
+                }`}
               >
                 <Text
                   style={{ fontFamily: 'Inter_400Regular' }}
-                  className={`text-sm ${item.isMine ? 'text-white' : 'text-[#0F0B18]'
-                    }`}
+                  className={`text-sm ${
+                    item.isMine ? 'text-white' : 'text-[#0F0B18]'
+                  }`}
                 >
                   {item.text}
                 </Text>
-
                 <Text
                   style={{ fontFamily: 'Inter_400Regular' }}
-                  className={`text-xs mt-1 ${item.isMine
-                      ? 'text-purple-200'
-                      : 'text-gray-400'
-                    }`}
+                  className={`text-xs mt-1 ${
+                    item.isMine ? 'text-purple-200' : 'text-gray-400'
+                  }`}
                 >
                   {item.time}
                 </Text>
@@ -184,8 +167,8 @@ export default function ChatScreen() {
 
         {/* Input */}
         <View
-          className="px-4 pt-3 pb-2 flex-row items-center gap-3 border-t border-gray-100 bg-white"
-         
+          style={{ paddingBottom: insets.bottom || 12 }}
+          className="px-4 pt-3 flex-row items-center gap-3 border-t border-gray-100 bg-white"
         >
           <TouchableOpacity className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center">
             <ImageIcon size={20} color="#9CA3AF" />
@@ -215,6 +198,8 @@ export default function ChatScreen() {
             <Send size={18} color="white" />
           </TouchableOpacity>
         </View>
-    </SafeAreaView>
+
+      </KeyboardAvoidingView>
+    </View>
   );
 }
