@@ -1,6 +1,7 @@
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { setCredentials } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { router } from "expo-router";
 import { Lock, Mail } from "lucide-react-native";
@@ -8,6 +9,7 @@ import { useState } from "react";
 import { Image, Text, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,33 +19,27 @@ export default function Login() {
 
   // 
   const handleLogin = async () => {
-    // try {
-    //   const result = await login({ email, password }).unwrap();
-    //   console.log(result?.data)
-    //   dispatch(setCredentials(
-    //     {
-    //       token: result?.data?.accessToken,
-    //       user: result?.data?.user,
-    //       role: result.data.role,
-    //     }
-    //   ));
-    //   if (result.data.role === 'employee') {
-    //     router.replace("/(employee)/home" as any);
-    //   } else {
-    //     router.replace("/(users)/home" as any);
-    //   }
+    try {
+      const result = await login({ email, password }).unwrap();
+      dispatch(setCredentials({
+        token: result?.data?.accessToken,
+        refreshToken: result?.data?.refreshToken,
+        user: {
+          email: result?.data?.email,
+          role: result?.data?.role,
+        },
+      }));
+      if (result.data.role === 'customer') {
+        router.replace("/(users)/home" as any);
+      } else {
+        router.replace("/(employee)/home" as any);
 
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    if (email === "user@gmail.com" && password === "1234") {
-      router.push("/(users)/home" as any);
-    } else if (email === "employee@gmail.com" && password === "1234") {
-      router.push("/(employee)/home" as any);
-    } else {
-      alert("Invalid email or password");
+      }
+
+    } catch (error : any) {
+      console.error(error);
+      toast.error(error?.data?.message || "Login failed. Please check your credentials and try again.");
     }
-    console.log(email, password)
   }
   return (
     <SafeAreaView className="flex-1  bg-white">
@@ -51,7 +47,7 @@ export default function Login() {
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20 , justifyContent: 'center'}}
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20, justifyContent: 'center' }}
         enableOnAndroid={true}
         extraScrollHeight={5}
       >
@@ -61,7 +57,7 @@ export default function Login() {
           className="w-44 mx-auto my-8"
           resizeMode="contain"
         />
-    
+
 
 
         <InputField
@@ -89,7 +85,7 @@ export default function Login() {
           <Text className="text-[#EE2626]">Forget Password</Text>
         </TouchableOpacity>
         {/* Register Button */}
-        <Button handlePress={handleLogin} text="Login" />
+        <Button handlePress={handleLogin} text="Login" isLoading={isLoading} />
 
         {/* Login Link */}
         <TouchableOpacity

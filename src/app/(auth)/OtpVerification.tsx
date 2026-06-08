@@ -1,19 +1,40 @@
 import Button from '@/components/shared/Button'
 import OTPInput, { OTPInputHandle } from '@/components/shared/OtpInput'
-import { router } from 'expo-router'
+import { useResendOtpMutation, useVerifyOtpMutation } from '@/redux/features/auth/authApi'
+import { router, useLocalSearchParams } from 'expo-router'
 import React, { useRef } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { toast } from 'sonner-native'
 
 const OtpVerification = () => {
-  const otpRef = useRef<OTPInputHandle>(null);
+    const { email } = useLocalSearchParams<{ email: string }>();
+    const otpRef = useRef<OTPInputHandle>(null);
     const [otp, setOtp] = React.useState("");
+    const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+    const [resendOtp, { isLoading: isResending }] = useResendOtpMutation();
 
-    const handleOtp = () => {
-        // console.log("OTP Entered:", otp);
-        router.push("/(auth)/login")
-        // Here you would typically verify the OTP with your backend
+    const handleOtp = async () => {
+        try {
+            const result = await verifyOtp({ email, otp }).unwrap();
+            console.log( "result",result)
+            toast.success(result?.message || "OTP verified successfully! Please login.");
+            router.replace("/(auth)/login" as any);
+        } catch (error: any) {
+            toast.error(error?.data?.message || "OTP verification failed");
+        }
     }
+
+
+    const handleResend = async () => {
+        try {
+            const result = await resendOtp({ email }).unwrap();
+            toast.success(result?.message || "OTP resent successfully!");
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Failed to resend OTP");
+        }
+    };
+
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -43,11 +64,14 @@ const OtpVerification = () => {
                 </View>
                 <View className="items-center py-4 mt-20">
                     <Text className="text-[#4F4F59] text-sm">
-                        Didn't receive the code? <Text className="text-[#652D8B]">Resend</Text>
+                        Didn't receive the code?   <TouchableOpacity onPress={handleResend} disabled={isResending}>
+                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#652D8B]">
+                                {isResending ? "Sending..." : "Resend"}
+                            </Text>
+                        </TouchableOpacity>
                     </Text>
                 </View>
-                <Button text="Verify OTP" handlePress={handleOtp} />
-
+                <Button text="Verify OTP" handlePress={handleOtp} isLoading={isLoading} />
             </ScrollView>
         </SafeAreaView>
     )

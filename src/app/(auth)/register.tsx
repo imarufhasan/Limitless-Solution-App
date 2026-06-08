@@ -1,5 +1,6 @@
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
+import { useRegisterMutation } from "@/redux/features/auth/authApi";
 import { router } from "expo-router";
 import { Lock, Mail, Phone, User } from "lucide-react-native";
 import { useState } from "react";
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -19,9 +21,31 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
 
-  const handleRegister = () => {
-    router.push("/(auth)/OtpVerification" as any);
-  };
+  const [register, { isLoading }] = useRegisterMutation();
+
+  const handleRegister = async () => {
+  try {
+    const result = await register({
+      name,
+      email,
+      password,
+      phoneNumber: phone,
+    }).unwrap();
+
+    toast.success(result?.message || "Registration successful! Please verify your email.");
+    console.log(result?.message )
+
+    router.push({
+      pathname: "/(auth)/OtpVerification",
+      params: { email },
+    } as any);
+
+  } catch (error: any) {
+    // console.error("Register error:", error);
+    toast.error(error?.data?.message || "Registration failed. Please try again.");
+     console.log(error?.data?.message )
+  }
+};
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -108,7 +132,12 @@ export default function Register() {
         </TouchableOpacity>
 
         {/* Register Button */}
-        <Button handlePress={handleRegister} text="Register" />
+        <Button
+          handlePress={handleRegister}
+          text="Register"
+          isLoading={isLoading}
+          loadingText="Creating account"
+        />
 
         {/* Login Link */}
         <TouchableOpacity

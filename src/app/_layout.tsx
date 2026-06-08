@@ -10,11 +10,12 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-
+import { Toaster } from 'sonner-native';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -34,19 +35,22 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider>
-          <KeyboardProvider>
-          <StatusBar style="dark" />
-          {(fontsLoaded || fontError) && (
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="onboarding/index" />
-              <Stack.Screen name="(settings)" />
-              <Stack.Screen name="chat" />
-            </Stack>
-          )}
-          </KeyboardProvider>
-        </SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <KeyboardProvider>
+              <StatusBar style="dark" />
+              {(fontsLoaded || fontError) && (
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="onboarding/index" />
+                  <Stack.Screen name="(settings)" />
+                  <Stack.Screen name="chat" />
+                </Stack>
+              )}
+              <Toaster />
+            </KeyboardProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
       </PersistGate>
     </Provider>
   );

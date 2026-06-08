@@ -1,3 +1,6 @@
+import { logout } from '@/redux/features/auth/authSlice';
+import { useAppDispatch } from '@/redux/hooks';
+import { persistor } from '@/redux/store';
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -13,13 +16,21 @@ const menuItems = [
 ];
 
 export default function Profile() {
+
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    await persistor.purge();
+    dispatch(logout());
+    router.replace("/onboarding" as any);
+  }
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
       <ScrollView
         className="flex-1  px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 20, 
+          paddingBottom: 20,
         }}
       >
         {/* Header */}
@@ -68,10 +79,7 @@ export default function Profile() {
 
         {/* Logout */}
         <TouchableOpacity
-          onPress={() => {
-            // Handle logout logic
-            router.push("/(auth)/login");
-          }}
+          onPress={() => {handleLogout()}}
           style={{
             flexDirection: 'row',
             alignItems: 'center',

@@ -2,14 +2,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 
-type ButtonProps = {
-  handlePress: () => void;
+type Props = {
+  onPress: () => void;
+  isLoading: boolean;
   text: string;
-  isLoading?: boolean;
   loadingText?: string;
 };
 
-const Button = ({ handlePress, text, isLoading = false, loadingText = "Loading..." }: ButtonProps) => {
+export default function LoadingButton({ onPress, isLoading, text, loadingText = "Loading..." }: Props) {
   const dot1 = useRef(new Animated.Value(0)).current;
   const dot2 = useRef(new Animated.Value(0)).current;
   const dot3 = useRef(new Animated.Value(0)).current;
@@ -20,7 +20,7 @@ const Button = ({ handlePress, text, isLoading = false, loadingText = "Loading..
         Animated.loop(
           Animated.sequence([
             Animated.delay(delay),
-            Animated.timing(dot, { toValue: -6, duration: 300, useNativeDriver: true }),
+            Animated.timing(dot, { toValue: -8, duration: 300, useNativeDriver: true }),
             Animated.timing(dot, { toValue: 0, duration: 300, useNativeDriver: true }),
           ])
         ).start();
@@ -37,10 +37,10 @@ const Button = ({ handlePress, text, isLoading = false, loadingText = "Loading..
 
   return (
     <TouchableOpacity
-      onPress={handlePress}
+      onPress={onPress}
       disabled={isLoading}
       activeOpacity={0.8}
-      style={{ borderRadius: 50, overflow: 'hidden', marginBottom: 16 }}
+      style={{ borderRadius: 50, overflow: 'hidden' }}
     >
       <LinearGradient
         colors={isLoading ? ['#9B6BB5', '#9B6BB5'] : ['#652D8B', '#8718D2']}
@@ -56,15 +56,15 @@ const Button = ({ handlePress, text, isLoading = false, loadingText = "Loading..
       >
         {isLoading ? (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text style={{ fontFamily: "Inter_500Medium", color: 'white', fontSize: 15, marginRight: 4 }}>
+            <Text style={{ fontFamily: "Inter_500Medium", color: 'white', fontSize: 15, marginRight: 8 }}>
               {loadingText}
             </Text>
             {[dot1, dot2, dot3].map((dot, i) => (
               <Animated.View
                 key={i}
                 style={{
-                  width: 7,
-                  height: 7,
+                  width: 8,
+                  height: 8,
                   borderRadius: 4,
                   backgroundColor: 'white',
                   transform: [{ translateY: dot }],
@@ -73,13 +73,11 @@ const Button = ({ handlePress, text, isLoading = false, loadingText = "Loading..
             ))}
           </View>
         ) : (
-          <Text style={{ fontFamily: "Inter_600SemiBold", color: 'white', fontSize: 18 }}>
+          <Text style={{ fontFamily: "Inter_600SemiBold", color: 'white', fontSize: 16 }}>
             {text}
           </Text>
         )}
       </LinearGradient>
     </TouchableOpacity>
   );
-};
-
-export default Button;
+}
