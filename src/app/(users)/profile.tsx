@@ -31,6 +31,8 @@ export default function Profile() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 20,
+          // flexGrow: 1,
+          // justifyContent: 'center',
         }}
       >
         {/* Header */}
@@ -79,7 +81,7 @@ export default function Profile() {
 
         {/* Logout */}
         <TouchableOpacity
-          onPress={() => {handleLogout()}}
+          onPress={() => { handleLogout() }}
           style={{
             flexDirection: 'row',
             alignItems: 'center',

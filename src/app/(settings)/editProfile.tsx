@@ -1,31 +1,52 @@
 import BackButton from '@/components/shared/BackButton';
-import * as ImagePicker from 'expo-image-picker';
-import { MapPin, User } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Button from '@/components/shared/Button';
+import { useEditProfileMutation, useGetProfileQuery } from '@/redux/features/auth/authApi';
+import { MapPin, Phone, User } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toast } from 'sonner-native';
 
 export default function ProfileSetting() {
-  const [name, setName] = useState("John Deo");
-  const [phone, setPhone] = useState("02-8312024");
-  const [address, setAddress] = useState("123 Main Street, Dhaka");
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
 
-  const pickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) return;
+  const { data, isLoading } = useGetProfileQuery({});
+  const [editProfile, { isLoading: isUpdating }] = useEditProfileMutation();
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'] as ImagePicker.MediaType[],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
 
-    if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
+
+  useEffect(() => {
+    if (data?.data) {
+      setName(data.data.name || "");
+      setPhone(data.data.phoneNumber || "");
+      setAddress(data.data.address || "");
+    }
+  }, [data]);
+
+
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('address', address);
+      formData.append('phoneNumber', phone);
+
+      const result = await editProfile(formData).unwrap();
+      toast.success(result?.message || "Profile updated successfully!");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to update profile");
     }
   };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }} edges={['top']}>
+        <ActivityIndicator size="large" color="#652D8B" />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top']}>
@@ -34,45 +55,8 @@ export default function ProfileSetting() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 60 }}
+          contentContainerStyle={{ paddingBottom: 60, flexGrow: 1, justifyContent: 'center' }}
         >
-          {/* Avatar */}
-          <View style={{ alignItems: 'center', marginBottom: 32 }}>
-            <View style={{ position: 'relative' }}>
-              <View style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                overflow: 'hidden',
-                backgroundColor: '#F3E8FF',
-              }}>
-                <Image
-                  source={avatar ? { uri: avatar } : require('@/assets/images/user.png')}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode="cover"
-                />
-              </View>
-              {/* <TouchableOpacity
-                onPress={pickImage}
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-                  backgroundColor: '#652D8B',
-                  width: 30,
-                  height: 30,
-                  borderRadius: 15,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderWidth: 2,
-                  borderColor: 'white',
-                }}
-              >
-                <Camera size={14} color="white" />
-              </TouchableOpacity> */}
-            </View>
-          </View>
-
           {/* Name */}
           <View style={{ marginBottom: 16 }}>
             <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#0F0B18', marginBottom: 8 }}>
@@ -114,8 +98,7 @@ export default function ProfileSetting() {
               borderWidth: 1,
               borderColor: '#F3F4F6',
             }}>
-              <Text style={{ fontSize: 18 }}>🇺🇸</Text>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>∨</Text>
+              <Phone size={18} color="#9CA3AF" />
               <TextInput
                 value={phone}
                 onChangeText={setPhone}
@@ -153,17 +136,7 @@ export default function ProfileSetting() {
 
         {/* Save Button */}
         <View style={{ paddingBottom: 16 }}>
-          <TouchableOpacity style={{
-            backgroundColor: '#652D8B',
-            paddingVertical: 16,
-            borderRadius: 50,
-            alignItems: 'center',
-            marginBottom: 40,
-          }}>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: 'white' }}>
-              Save
-            </Text>
-          </TouchableOpacity>
+          <Button text="Save" handlePress={handleSave} isLoading={isUpdating} />
         </View>
       </View>
     </SafeAreaView>

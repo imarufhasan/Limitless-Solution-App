@@ -30,7 +30,32 @@ const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+    getProfile: builder.query({
+      query: () => ({
+        url: '/auth/me',
+        method: 'GET',
+      }),
+      providesTags: ['User'],
+    }),
+    editProfile: builder.mutation({
+      query: (data) => ({
+        url: '/auth/update-profile',
+        method: 'PATCH',
+        body: data,
+        formData: true,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/changed-password',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+
+
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useVerifyOtpMutation , useResendOtpMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation, useVerifyOtpMutation, useResendOtpMutation, useGetProfileQuery, useEditProfileMutation , useChangePasswordMutation} = authApi;
