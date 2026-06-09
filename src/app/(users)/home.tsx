@@ -17,6 +17,7 @@ const Home = () => {
 
   const metals = data?.data || [];
 
+
   // Quick action cards data
   const quickActions = [
     {
@@ -124,7 +125,7 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         </View>
-        
+
         {/* Metal Price Cards */}
         {isLoading ? (
           <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 20 }} />

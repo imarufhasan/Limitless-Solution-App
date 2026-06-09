@@ -1,15 +1,16 @@
-import { useGetVehicleOrdersQuery } from '@/redux/features/orderApi';
+import { useAcceptQuoteMutation, useGetVehicleOrdersQuery } from '@/redux/features/orderApi';
 import { router } from 'expo-router';
 import { Calendar, Clock, FileText, MapPin, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { toast } from 'sonner-native';
 
-const tabs = ["pending", "quoted", "accepted", "completed"];
+const tabs = ["pending", "qouted", "accepted", "completed"];
 
 const statusConfig: Record<string, { bg: string; text: string; border: string; label: string }> = {
   pending: { bg: "#FEF9C3", text: "#854D0E", border: "#FEF9C3", label: "Pending" },
-  quoted: { bg: "#EFF6FF", text: "#1E40AF", border: "#BFDBFE", label: "Quoted" },
+  qouted: { bg: "#EFF6FF", text: "#1E40AF", border: "#BFDBFE", label: "Quoted" },
   accepted: { bg: "#F0FDF4", text: "#166534", border: "#BBF7D0", label: "Accepted" },
   completed: { bg: "#F0FDF4", text: "#166534", border: "#BBF7D0", label: "Completed" },
 };
@@ -17,15 +18,26 @@ const statusConfig: Record<string, { bg: string; text: string; border: string; l
 export default function Track() {
   const [activeTab, setActiveTab] = useState("pending");
 
-  const { data, isLoading } = useGetVehicleOrdersQuery({
-    page: 1,
-    limit: 20,
-    status: activeTab,
-  });
+
+  const { data, isLoading } = useGetVehicleOrdersQuery({ page: 1, limit: 20, status: activeTab, }, { refetchOnMountOrArgChange: true, });
 
   const orders = data?.data || [];
 
-  // console.log("Orders", orders)
+  const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
+
+
+  const handleAcceptQuote = async (orderId: string) => {
+    console.log("Accepting order:", orderId);
+    try {
+      const result = await acceptQuote(orderId).unwrap();
+      console.log("Accept result:", result);
+      toast.success(result?.message || "Quote accepted successfully!");
+    } catch (error: any) {
+      console.log("Accept error:", error);
+      toast.error(error?.data?.message || "Failed to accept quote");
+    }
+  };
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
@@ -60,7 +72,7 @@ export default function Track() {
                 color: activeTab === tab ? "#FFFFFF" : "#6B7280",
                 textTransform: 'capitalize',
               }}>
-                {tab}
+                {statusConfig[tab].label}
               </Text>
             </TouchableOpacity>
           ))}
@@ -145,10 +157,10 @@ export default function Track() {
                       marginBottom: 12,
                     }}>
                       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: '#166534' }}>
-                        Car Value
+                        Total Value
                       </Text>
                       <Text style={{ fontFamily: "Inter_700Bold", fontSize: 20, color: '#166534' }}>
-                        ${item.subTotal}
+                        ${item.totalPrice}
                       </Text>
                     </View>
                   )}
@@ -188,7 +200,7 @@ export default function Track() {
                   )}
 
                   {/* Buttons */}
-                  {item.status === "quoted" && (
+                  {item.status === "qouted" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <TouchableOpacity style={{
                         flex: 1, paddingVertical: 12, borderRadius: 30,
@@ -198,12 +210,15 @@ export default function Track() {
                           Decline
                         </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={{
-                        flex: 1, paddingVertical: 12, borderRadius: 30,
-                        alignItems: 'center', backgroundColor: '#652D8B',
-                      }}>
+                      <TouchableOpacity
+                        onPress={() => handleAcceptQuote(item.orderId)}
+                        disabled={isAccepting}
+                        style={{
+                          flex: 1, paddingVertical: 12, borderRadius: 30,
+                          alignItems: 'center', backgroundColor: '#652D8B',
+                        }}>
                         <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
-                          Accept Quote
+                          {isAccepting ? "Accepting..." : "Accept Quote"}
                         </Text>
                       </TouchableOpacity>
                     </View>
