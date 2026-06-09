@@ -58,4 +58,4 @@ const authApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useVerifyOtpMutation, useResendOtpMutation, useGetProfileQuery, useEditProfileMutation , useChangePasswordMutation} = authApi;
+export const { useLoginMutation, useRegisterMutation, useVerifyOtpMutation, useResendOtpMutation, useGetProfileQuery, useEditProfileMutation, useChangePasswordMutation } = authApi;

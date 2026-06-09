@@ -16,7 +16,6 @@ export default function ProfileSetting() {
   const [editProfile, { isLoading: isUpdating }] = useEditProfileMutation();
 
 
-
   useEffect(() => {
     if (data?.data) {
       setName(data.data.name || "");

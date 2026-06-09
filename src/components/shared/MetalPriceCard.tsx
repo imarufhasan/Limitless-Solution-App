@@ -2,17 +2,19 @@ import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 
 type Metal = {
-    id: string;
-    name: string;
-    unit: string;
-    price: string;
+  _id: string;
+  name: string;
+  unit: string;
+  price: number;
+  priceTrending: number;
+  priceTrendingDirection: 'up' | 'down';
 };
 
 export default function MetalPriceCard( { metals } : { metals : Metal[] }) {
     return (
         <FlatList
             data={metals}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item._id}
             scrollEnabled={false}
             contentContainerStyle={{ paddingHorizontal: 0 }}  
             renderItem={({ item }) => (

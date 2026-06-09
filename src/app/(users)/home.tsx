@@ -1,12 +1,23 @@
 import MetalPriceCard from '@/components/shared/MetalPriceCard'
 import Carousel from '@/components/ui/Carousel'
+import { useGetMetalsQuery } from '@/redux/features/metalApi'
 import { router } from 'expo-router'
 import { ArrowRight, BellIcon, Calculator, Car, Zap } from 'lucide-react-native'
 import React from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
+
+  // Live metal prices query
+  const { data, isLoading } = useGetMetalsQuery({
+    page: 1,
+    limit: 6,
+  });
+
+  const metals = data?.data || [];
+
+  // Quick action cards data
   const quickActions = [
     {
       id: "1",
@@ -24,13 +35,7 @@ const Home = () => {
     },
   ];
 
-  const metals = [
-    { id: "1", name: "Iron", unit: "Per lb", price: "$150" },
-    { id: "2", name: "Copper", unit: "Per lb", price: "$850" },
-    { id: "3", name: "Aluminum", unit: "Per lb", price: "$220" },
-    { id: "4", name: "Steel", unit: "Per lb", price: "$180" },
-    { id: "5", name: "Steel", unit: "Per lb", price: "$180" },
-  ];
+
 
 
 
@@ -41,14 +46,7 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
       >
         <View className="flex-row items-center justify-end mt-3">
-          {/* <View className="bg-white rounded-full overflow-hidden shadow-lg ">
-            <Image source={require('@/assets/images/user.png')} className="w-14 h-14" />
-          </View> */}
 
-          {/* <View className=" mx-auto bg-white px-6 py-2 rounded-full ">
-            <Text className="text-[#652D8B] mx-auto">Total Earnings</Text>
-            <Text className="text-[18px] mx-auto font-bold ">$1,250.00</Text>
-          </View> */}
           <TouchableOpacity onPress={() => router.push("/notifications")}>
             <View className="bg-white rounded-full p-3 shadow-lg">
               <BellIcon size={24} color="#4F4F59" />
@@ -126,8 +124,13 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         </View>
+        
         {/* Metal Price Cards */}
-        <MetalPriceCard metals={metals} />
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 20 }} />
+        ) : (
+          <MetalPriceCard metals={metals} />
+        )}
 
 
 
