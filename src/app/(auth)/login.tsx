@@ -37,7 +37,6 @@ export default function Login() {
       }
 
     } catch (error : any) {
-      console.error(error);
       toast.error(error?.data?.message || "Login failed. Please check your credentials and try again.");
     }
   }
@@ -81,7 +80,7 @@ export default function Login() {
         />
 
 
-        <TouchableOpacity className="self-end mb-4">
+        <TouchableOpacity onPress={() => router.push("/(auth)/forgetPassword" as any)} className="self-end mb-4">
           <Text className="text-[#EE2626]">Forget Password</Text>
         </TouchableOpacity>
         {/* Register Button */}

@@ -13,14 +13,14 @@ export default function HomeScreen() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    console.log("token:", token);
-    console.log("user:", user);
-  }, [token, user]);
+  // useEffect(() => {
+  //   console.log("token:", token);
+  //   console.log("user:", user);
+  // }, [token, user]);
 
   if (ready) {
-    if (token && user) {
-      if (user.role === 'employee') {
+      if (token && user) {
+      if (user?.role === 'staff') {
         return <Redirect href="/(employee)/home" />;
       }
       return <Redirect href="/(users)/home" />;

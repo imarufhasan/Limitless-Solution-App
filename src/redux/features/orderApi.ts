@@ -35,7 +35,23 @@ const orderApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ['Request'],
         }),
+        cancelQuote: builder.mutation({
+            query: (id) => ({
+                url: `/order/cancel/${id}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Request'],
+        }),
+        createMetalOrder: builder.mutation({
+            query: (data) => ({
+                url: '/order/metal',
+                method: 'POST',
+                body: data,
+                formData: true,
+            }),
+            invalidatesTags: ['Request'],
+        }),
     }),
 });
 
-export const { useCreateVehicleOrderMutation, useGetVehicleOrdersQuery, useAcceptQuoteMutation } = orderApi;
+export const { useCreateVehicleOrderMutation, useGetVehicleOrdersQuery, useAcceptQuoteMutation, useCancelQuoteMutation , useCreateMetalOrderMutation } = orderApi;

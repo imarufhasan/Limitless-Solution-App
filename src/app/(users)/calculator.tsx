@@ -1,70 +1,61 @@
 import CalculatorResultModal from '@/components/CalculatorResultModal';
+import { useGetMetalsQuery } from '@/redux/features/metalApi';
+import { router } from 'expo-router';
 import { Calculator as CalculatorIcon, ChevronDown } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const parts = [
-  { id: "1", name: "Engine", kgPrice: 50, pcPrice: 200 },
-  { id: "2", name: "Battery", kgPrice: 20, pcPrice: 45 },
-  { id: "3", name: "Catalytic Converter", kgPrice: 30, pcPrice: 120 },
-  { id: "4", name: "Radiator", kgPrice: 35, pcPrice: 15 },
-  { id: "5", name: "Tires", kgPrice: 10, pcPrice: 25 },
-  { id: "6", name: "Transmission", kgPrice: 40, pcPrice: 180 },
-  { id: "7", name: "Aluminium Parts", kgPrice: 15, pcPrice: 30 },
-  { id: "8", name: "Copper Wiring", kgPrice: 25, pcPrice: 10 },
-  { id: "9", name: "Steel Body", kgPrice: 12, pcPrice: 50 },
-];
-
-type SelectedPart = {
-  id: string;
+type SelectedMetal = {
+  _id: string;
   name: string;
-  kgPrice: number;
-  pcPrice: number;
-  unit: "kg" | "pc";
+  price: number;
+  unit: string;
   quantity: number;
 };
 
 export default function Calculator() {
   const [showResult, setShowResult] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
+  const [selectedMetals, setSelectedMetals] = useState<SelectedMetal[]>([]);
 
-  const addPart = (part: typeof parts[0]) => {
-    const exists = selectedParts.find((p) => p.id === part.id);
+  const { data: metalsData } = useGetMetalsQuery({ page: 1, limit: 20 });
+  const metals = metalsData?.data || [];
+
+  const addMetal = (metal: any) => {
+    const exists = selectedMetals.find((m) => m._id === metal._id);
     if (!exists) {
-      setSelectedParts([...selectedParts, {
-        ...part,
-        unit: "pc",
+      setSelectedMetals([...selectedMetals, {
+        _id: metal._id,
+        name: metal.name,
+        price: metal.price,
+        unit: metal.unit,
         quantity: 1,
       }]);
     }
     setShowDropdown(false);
   };
 
-  const removePart = (id: string) => {
-    setSelectedParts(selectedParts.filter((p) => p.id !== id));
-  };
-
-  const updateUnit = (id: string, unit: "kg" | "pc") => {
-    setSelectedParts(selectedParts.map((p) => p.id === id ? { ...p, unit } : p));
+  const removeMetal = (id: string) => {
+    setSelectedMetals(selectedMetals.filter((m) => m._id !== id));
   };
 
   const updateQuantity = (id: string, qty: string) => {
-    const quantity = parseInt(qty) || 0;
-    setSelectedParts(selectedParts.map((p) => p.id === id ? { ...p, quantity } : p));
+    const quantity = parseInt(qty) || 1;
+    setSelectedMetals(selectedMetals.map((m) => m._id === id ? { ...m, quantity } : m));
   };
 
-  const getSubtotal = (part: SelectedPart) => {
-    const price = part.unit === "kg" ? part.kgPrice : part.pcPrice;
-    return (price * part.quantity).toFixed(2);
+  const getSubtotal = (metal: SelectedMetal) => {
+    return (metal.price * metal.quantity).toFixed(2);
   };
 
   const getTotal = () => {
-    return selectedParts.reduce((sum, part) => {
-      const price = part.unit === "kg" ? part.kgPrice : part.pcPrice;
-      return sum + price * part.quantity;
-    }, 0).toFixed(2);
+    return selectedMetals.reduce((sum, m) => sum + m.price * m.quantity, 0).toFixed(2);
+  };
+
+  const handleEstimate = () => {
+    if (selectedMetals.length === 0) return;
+    setShowResult(true);
   };
 
   return (
@@ -97,19 +88,19 @@ export default function Calculator() {
             }}
           >
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#9CA3AF' }}>
-              Select a part to add
+              Select a metal to add
             </Text>
-            <Text style={{ fontSize: 16, color: '#6B7280' }}><ChevronDown /></Text>
+            <ChevronDown size={18} color="#9CA3AF" />
           </TouchableOpacity>
 
-          {/* Selected Parts */}
-          {selectedParts.length > 0 && (
+          {/* Selected Metals */}
+          {selectedMetals.length > 0 && (
             <View style={{ marginBottom: 20 }}>
               <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18', marginBottom: 12 }}>
-                Selected Parts
+                Selected Metals
               </Text>
-              {selectedParts.map((part) => (
-                <View key={part.id} style={{
+              {selectedMetals.map((metal) => (
+                <View key={metal._id} style={{
                   backgroundColor: 'white',
                   borderRadius: 16,
                   padding: 16,
@@ -117,47 +108,33 @@ export default function Calculator() {
                   borderWidth: 1,
                   borderColor: '#E5E7EB',
                 }}>
-                  {/* Part Name & Remove */}
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  {/* Name & Remove */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
-                      {part.name}
+                      {metal.name}
                     </Text>
-                    <TouchableOpacity onPress={() => removePart(part.id)}>
+                    <TouchableOpacity onPress={() => removeMetal(metal._id)}>
                       <Text style={{ color: '#EF4444', fontSize: 18 }}>✕</Text>
                     </TouchableOpacity>
                   </View>
 
-                  {/* Unit */}
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: '#9CA3AF', marginBottom: 8 }}>
-                    Unit
-                  </Text>
-                  <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
-                    <View
-                      style={{
-                        flex: 1,
-                        paddingVertical: 10,
-                        borderRadius: 10,
-                        alignItems: 'center',
-                        backgroundColor: "#652D8B",
-                      }}
-                    >
-                      <Text style={{
-                        fontFamily: "Inter_500Medium",
-                        fontSize: 13,
-                        color: "white",
-                      }}>
-                        lb (${part.kgPrice}/ lb)
-                      </Text>
-                    </View>
+                  {/* Unit Price */}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: '#9CA3AF' }}>
+                      Unit Price
+                    </Text>
+                    <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: '#0F0B18' }}>
+                      ${metal.price}/{metal.unit}
+                    </Text>
                   </View>
 
                   {/* Quantity */}
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: '#9CA3AF', marginBottom: 8 }}>
-                    Quantity 
+                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: '#9CA3AF', marginBottom: 6 }}>
+                    Quantity ({metal.unit})
                   </Text>
                   <TextInput
-                    value={part.quantity.toString()}
-                    onChangeText={(val) => updateQuantity(part.id, val)}
+                    value={metal.quantity.toString()}
+                    onChangeText={(val) => updateQuantity(metal._id, val)}
                     keyboardType="numeric"
                     style={{
                       fontFamily: "Inter_400Regular",
@@ -168,17 +145,17 @@ export default function Calculator() {
                       borderRadius: 10,
                       paddingHorizontal: 14,
                       paddingVertical: 10,
-                      marginBottom: 12,
+                      marginBottom: 10,
                     }}
                   />
 
                   {/* Subtotal */}
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: '#9CA3AF' }}>
                       Subtotal
                     </Text>
                     <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: '#652D8B' }}>
-                      ${getSubtotal(part)}
+                      ${getSubtotal(metal)}
                     </Text>
                   </View>
                 </View>
@@ -187,17 +164,21 @@ export default function Calculator() {
           )}
         </ScrollView>
 
-        {/* Calculate Button */}
+        {/* Estimate Button */}
         <View style={{ paddingBottom: 16 }}>
-          <TouchableOpacity onPress={() => setShowResult(true)} style={{
-            backgroundColor: '#652D8B',
-            paddingVertical: 16,
-            borderRadius: 50,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-          }}>
+          <TouchableOpacity
+            onPress={handleEstimate}
+            disabled={selectedMetals.length === 0}
+            style={{
+              backgroundColor: selectedMetals.length === 0 ? '#9B6BB5' : '#652D8B',
+              paddingVertical: 16,
+              borderRadius: 50,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            }}
+          >
             <CalculatorIcon size={18} color="white" />
             <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: 'white' }}>
               Estimate Value
@@ -226,35 +207,43 @@ export default function Calculator() {
             borderWidth: 1,
             borderColor: '#E5E7EB',
           }}>
-            {parts.map((part, i) => (
+            {metals.map((metal: any, i: number) => (
               <TouchableOpacity
-                key={part.id}
-                onPress={() => addPart(part)}
+                key={metal._id}
+                onPress={() => addMetal(metal)}
                 style={{
                   paddingHorizontal: 16,
                   paddingVertical: 14,
-                  backgroundColor: i === 0 ? '#F3E8FF' : 'white',
-                  borderBottomWidth: i < parts.length - 1 ? 1 : 0,
+                  borderBottomWidth: i < metals.length - 1 ? 1 : 0,
                   borderBottomColor: '#F3F4F6',
+                  backgroundColor: selectedMetals.find(m => m._id === metal._id) ? '#F3E8FF' : 'white',
                 }}
               >
-                <Text style={{
-                  fontFamily: "Inter_400Regular",
-                  fontSize: 14,
-                  color: '#0F0B18',
-                }}>
-                  {part.name}
+                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#0F0B18' }}>
+                  {metal.name} — ${metal.price}/{metal.unit}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
         </TouchableOpacity>
       </Modal>
+
+      {/* Result Modal */}
       <CalculatorResultModal
         visible={showResult}
         onClose={() => setShowResult(false)}
         total={getTotal()}
-        partsCount={selectedParts.length}
+        partsCount={selectedMetals.length}
+        selectedMetals={selectedMetals}
+        onRequestPickup={() => {
+          setShowResult(false);
+          router.push({
+            pathname: '/requestPickup',
+            params: {
+              metals: JSON.stringify(selectedMetals),
+            },
+          } as any);
+        }}
       />
     </SafeAreaView>
   );

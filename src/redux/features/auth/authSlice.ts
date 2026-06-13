@@ -5,7 +5,7 @@ type AuthState = {
   refreshToken: string | null;
   user: {
     email: string;
-    role: 'customer' | 'employee' | null;
+    role: 'customer' | 'staff' | null;
   } | null;
 };
 

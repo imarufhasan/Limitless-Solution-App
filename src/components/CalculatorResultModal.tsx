@@ -1,6 +1,4 @@
 
-import { router } from 'expo-router';
-import { Calculator } from 'lucide-react-native';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
 type Props = {
@@ -8,39 +6,26 @@ type Props = {
   onClose: () => void;
   total: string;
   partsCount: number;
+  selectedMetals: any[];
+  onRequestPickup: () => void;
 };
 
-export default function CalculatorResultModal({ visible, onClose, total, partsCount }: Props) {
+export default function CalculatorResultModal({ visible, onClose, total, partsCount, selectedMetals, onRequestPickup }: Props) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <TouchableOpacity
         style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' }}
         onPress={onClose}
         activeOpacity={1}
       >
-        <View style={{
-          backgroundColor: 'white',
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-          padding: 24,
-        }}>
+        <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
           {/* Icon */}
           <View style={{ alignItems: 'center', marginBottom: 16 }}>
             <View style={{
-              width: 60,
-              height: 60,
-              borderRadius: 16,
-              backgroundColor: '#652D8B',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 12,
+              width: 60, height: 60, borderRadius: 16,
+              backgroundColor: '#652D8B', alignItems: 'center', justifyContent: 'center', marginBottom: 12,
             }}>
-              <Calculator size={28} color="white" />
+              <Text style={{ fontSize: 28, color: 'white' }}>$</Text>
             </View>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>
               Estimated Total Value
@@ -51,51 +36,41 @@ export default function CalculatorResultModal({ visible, onClose, total, partsCo
           </View>
 
           {/* Breakdown */}
-          <View style={{
-            borderTopWidth: 1,
-            borderTopColor: '#F3F4F6',
-            paddingTop: 16,
-            gap: 12,
-            marginBottom: 20,
-          }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>
-                Base Value:
-              </Text>
-              <Text style={{ fontFamily: "Inter_500Medium", fontSize: 14, color: '#0F0B18' }}>
-                $2,500
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>
-                Weight (55 lbs):
-              </Text>
-              <Text style={{ fontFamily: "Inter_500Medium", fontSize: 14, color: '#0F0B18' }}>
-                $2,750
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>
-                Parts ({partsCount}):
-              </Text>
-              <Text style={{ fontFamily: "Inter_500Medium", fontSize: 14, color: '#0F0B18' }}>
-                ${total}
-              </Text>
-            </View>
+          <View style={{ borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 16, marginBottom: 20 }}>
+            {selectedMetals.map((metal) => (
+              <View key={metal._id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#6B7280' }}>
+                  {metal.name} × {metal.quantity} {metal.unit}
+                </Text>
+                <Text style={{ fontFamily: "Inter_500Medium", fontSize: 14, color: '#0F0B18' }}>
+                  ${(metal.price * metal.quantity).toFixed(2)}
+                </Text>
+              </View>
+            ))}
           </View>
 
-          {/* Button */}
+          {/* Buttons */}
           <TouchableOpacity
-            onPress={()=> router.push("/requestPickup" as any)}
+            onPress={onRequestPickup}
             style={{
-              backgroundColor: '#652D8B',
-              paddingVertical: 16,
-              borderRadius: 50,
-              alignItems: 'center',
+              backgroundColor: '#652D8B', paddingVertical: 16,
+              borderRadius: 50, alignItems: 'center', marginBottom: 10,
             }}
           >
             <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: 'white' }}>
               Request Pickup
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              paddingVertical: 16, borderRadius: 50, alignItems: 'center',
+              borderWidth: 1, borderColor: '#E5E7EB',
+            }}
+          >
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 16, color: '#374151' }}>
+              Close
             </Text>
           </TouchableOpacity>
         </View>

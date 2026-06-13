@@ -1,4 +1,4 @@
-import { useAcceptQuoteMutation, useGetVehicleOrdersQuery } from '@/redux/features/orderApi';
+import { useAcceptQuoteMutation, useCancelQuoteMutation, useGetVehicleOrdersQuery } from '@/redux/features/orderApi';
 import { router } from 'expo-router';
 import { Calendar, Clock, FileText, MapPin, User } from 'lucide-react-native';
 import React, { useState } from 'react';
@@ -22,21 +22,27 @@ export default function Track() {
   const { data, isLoading } = useGetVehicleOrdersQuery({ page: 1, limit: 20, status: activeTab, }, { refetchOnMountOrArgChange: true, });
 
   const orders = data?.data || [];
+  console.log("Orders:", orders);
 
   const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
-
+  const [cancelQuote, { isLoading: isCancelling }] = useCancelQuoteMutation();
 
   const handleAcceptQuote = async (orderId: string) => {
-    console.log("Accepting order:", orderId);
     try {
       const result = await acceptQuote(orderId).unwrap();
-      console.log("Accept result:", result);
       toast.success(result?.message || "Quote accepted successfully!");
     } catch (error: any) {
-      console.log("Accept error:", error);
       toast.error(error?.data?.message || "Failed to accept quote");
     }
   };
+  const handleCancelQuote = async (orderId: string) => {
+    try {
+      const result = await cancelQuote(orderId).unwrap();
+      toast.success(result?.message || "Quote cancelled successfully!");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to cancel quote");
+    }
+  }
 
 
   return (
@@ -160,7 +166,7 @@ export default function Track() {
                         Total Value
                       </Text>
                       <Text style={{ fontFamily: "Inter_700Bold", fontSize: 20, color: '#166534' }}>
-                        ${item.totalPrice}
+                        ${item?.subTotal || 0}
                       </Text>
                     </View>
                   )}
@@ -202,12 +208,15 @@ export default function Track() {
                   {/* Buttons */}
                   {item.status === "qouted" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
-                      <TouchableOpacity style={{
+                      <TouchableOpacity 
+                        onPress={() => handleCancelQuote(item.orderId)}
+                        disabled={isCancelling}
+                      style={{
                         flex: 1, paddingVertical: 12, borderRadius: 30,
                         alignItems: 'center', borderWidth: 1, borderColor: '#E5E7EB',
                       }}>
                         <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#374151' }}>
-                          Decline
+                          {isCancelling ? "Cancelling..." : "Cancel Quote"}
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
