@@ -1,12 +1,14 @@
 import RequestSubmittedModal from '@/components/RequestSubmittedModal';
 import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
 import { useCreateMetalOrderMutation } from '@/redux/features/orderApi';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Calendar, FileText, Image as ImageIcon } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { toast } from 'sonner-native';
 
@@ -16,7 +18,8 @@ export default function RequestPickup() {
   const [showSubmitted, setShowSubmitted] = useState(false);
   const [notes, setNotes] = useState("");
   const [images, setImages] = useState<any[]>([]);
-
+  const [imagesLoading, setImagesLoading] = useState<boolean[]>([]);
+  const [isPicking, setIsPicking] = useState(false);
   const { metals: metalsParam } = useLocalSearchParams<{ metals: string }>();
   const selectedMetals = metalsParam ? JSON.parse(metalsParam) : [];
 
@@ -46,8 +49,14 @@ export default function RequestPickup() {
       quality: 0.8,
     });
     if (!result.canceled) {
+      setIsPicking(true);
       const remaining = 5 - images.length;
-      setImages([...images, ...result.assets.slice(0, remaining)]);
+      const newImages = result.assets.slice(0, remaining);
+      setImagesLoading(prev => [...prev, ...newImages.map(() => true)]);
+      setImages(prev => [...prev, ...newImages]);
+      setTimeout(() => {
+        setIsPicking(false);
+      }, 500);
     }
   };
 
@@ -84,8 +93,19 @@ export default function RequestPickup() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]">
-      <View className="flex-1 px-4">
+      <View className=" px-4 ">
         <BackButton title="Request Pickup" />
+      </View>
+
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20, justifyContent: 'center' }}
+        enableOnAndroid={true}
+        extraScrollHeight={5}
+      >
+
+
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
@@ -176,19 +196,19 @@ export default function RequestPickup() {
               borderColor: '#E5E7EB',
               borderRadius: 12,
               paddingHorizontal: 16,
-              paddingVertical: 12,
+              paddingVertical: 5,
               flexDirection: 'row',
               alignItems: 'flex-start',
               gap: 8,
             }}>
-              <FileText size={18} color="#9CA3AF" style={{ marginTop: 2 }} />
+              <FileText size={25} color="#9CA3AF" style={{ marginTop: 6 }} />
               <TextInput
                 placeholder="Any additional information..."
                 placeholderTextColor="#9CA3AF"
                 value={notes}
                 onChangeText={setNotes}
                 multiline
-                numberOfLines={3}
+                numberOfLines={4}
                 style={{ fontFamily: "Inter_400Regular", flex: 1 }}
                 className="text-sm text-[#0F0B18]"
               />
@@ -201,25 +221,62 @@ export default function RequestPickup() {
               onPress={pickImage}
               className="bg-white border border-dashed border-gray-300 rounded-xl p-6 items-center"
             >
-              <ImageIcon size={32} color="#9CA3AF" />
-              <Text style={{ fontFamily: "Inter_500Medium" }} className="text-sm text-gray-500 mt-2">
-                Upload Photos (Optional)
-              </Text>
-              <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mt-1">
-                {images.length}/5 — Click to browse
-              </Text>
+              {isPicking ? (
+                <>
+                  <ActivityIndicator size="small" color="#652D8B" />
+                  <Text style={{ fontFamily: "Inter_500Medium" }} className="text-sm text-[#652D8B] mt-2">
+                    Loading images...
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <ImageIcon size={32} color="#9CA3AF" />
+                  <Text style={{ fontFamily: "Inter_500Medium" }} className="text-sm text-gray-500 mt-2">
+                    Upload Photos (Optional)
+                  </Text>
+                  <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mt-1">
+                    {images.length}/5 — Click to browse
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
 
             {images.length > 0 && (
-              <View className="flex-row flex-wrap gap-2 mt-3">
+              <View className="flex-row flex-wrap gap-5 mt-3">
                 {images.map((img, i) => (
                   <View key={i} style={{ position: 'relative' }}>
                     <Image
                       source={{ uri: img.uri }}
-                      style={{ width: 60, height: 60, borderRadius: 8 }}
+                      style={{ width: 90, height: 70, borderRadius: 8 }}
+                      onLoadEnd={() => {
+                        setImagesLoading(prev => {
+                          const updated = [...prev];
+                          updated[i] = false;
+                          return updated;
+                        });
+                      }}
                     />
+
+                    {/* Loading overlay */}
+                    {imagesLoading[i] && (
+                      <View style={{
+                        position: 'absolute',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        borderRadius: 8,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                        <ActivityIndicator size="small" color="white" />
+                      </View>
+                    )}
+
+                    {/* Remove button */}
                     <TouchableOpacity
-                      onPress={() => setImages(images.filter((_, index) => index !== i))}
+                      onPress={() => {
+                        setImages(images.filter((_, index) => index !== i));
+                        setImagesLoading(prev => prev.filter((_, index) => index !== i));
+                      }}
                       style={{
                         position: 'absolute',
                         top: -6,
@@ -240,26 +297,27 @@ export default function RequestPickup() {
             )}
           </View>
         </ScrollView>
-      </View>
 
-      {/* Submit Button */}
-      <View className="px-4 pb-2 bg-[#F8F6FA]">
-        <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={isLoading}
-          className="bg-[#652D8B] py-4 rounded-full items-center"
-        >
-          <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-white text-base">
-            {isLoading ? "Submitting..." : "Submit Request"}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Submit Button */}
+        <View className="pb-2 bg-[#F8F6FA]">
+          {/* <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={isLoading}
+            className="bg-[#652D8B] py-4 rounded-full items-center"
+          >
+            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-white text-base">
+              {isLoading ? "Submitting..." : "Submit Request"}
+            </Text>
+          </TouchableOpacity> */}
+          <Button text='Submit Request' handlePress={()=>handleSubmit()} isLoading={isLoading} />
+        </View>
 
-      <RequestSubmittedModal
-        visible={showSubmitted}
-        onTrack={() => router.push("/(users)/track" as any)}
-        onHome={() => router.push("/(users)/home" as any)}
-      />
+        <RequestSubmittedModal
+          visible={showSubmitted}
+          onTrack={() => router.push("/(users)/track" as any)}
+          onHome={() => router.push("/(users)/home" as any)}
+        />
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

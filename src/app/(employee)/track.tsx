@@ -26,6 +26,7 @@ export default function EmployeeTrack() {
   });
 
   const assignments = data?.data || [];
+  // console.log(assignments[0]?.assignmentId)
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
@@ -89,7 +90,10 @@ export default function EmployeeTrack() {
                   activeOpacity={item.status === "pending" ? 0.7 : 1}
                   onPress={() => {
                     if (item.status === "pending") {
-                      router.push("/(trackPickup)/pendingPickup" as any);
+                      router.push({
+                        pathname: "/(trackPickup)/pendingPickup",
+                        params: { id: item?.assignmentId },
+                      } as any);
                     }
                   }}
                   style={{
@@ -98,7 +102,7 @@ export default function EmployeeTrack() {
                     padding: 16,
                     marginBottom: 12,
                     borderWidth: 1,
-                    borderColor: '#F3F4F6',
+                    borderColor: '#F1F1F2',
                   }}
                 >
                   {/* Top Row */}

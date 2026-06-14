@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ArrowLeft, MessageSquareMore, Package, User } from 'lucide-react-native';
+import { ArrowLeft, Package, User } from 'lucide-react-native';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,15 +10,17 @@ type Props = {
     status?: string;
     showDecline?: boolean;
     onDecline?: () => void;
+    assignment: any
 };
 
-export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon, onPress, status = "Ongoing", showDecline = false, onDecline }: Props) {
+export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon, onPress, status = "Ongoing", showDecline = false, onDecline , assignment }: Props) {
+    console.log("assignment screen", assignment)
     return (
-        <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-[#F8F6FA] " edges={['top']}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 className="flex-1"
-                contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 20 }}
+                contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 55 }}
             >
                 {/* Header */}
                 <View className="flex-row items-center justify-between py-2">
@@ -54,9 +56,9 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                                 Customer Information
                             </Text>
                         </View>
-                        <TouchableOpacity onPress={()=> router.push("/chat/[userId]")} className="w-9 h-9 rounded-full  border border-[#652D8B] items-center justify-center">
+                        {/* <TouchableOpacity onPress={()=> router.push("/chat/[userId]")} className="w-9 h-9 rounded-full  border border-[#652D8B] items-center justify-center">
                             <MessageSquareMore size={20} color="#652D8B" />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
 
                     {[

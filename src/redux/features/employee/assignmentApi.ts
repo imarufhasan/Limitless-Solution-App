@@ -15,9 +15,17 @@ const assignmentApi = baseApi.injectEndpoints({
           method: 'GET',
         };
       },
-      providesTags: ['Request'],
+      providesTags: ['assignment'],
     }),
+    getAssignmentDetails : builder.query({
+      query : ({id}) =>{
+        return{
+          url : `/assignment/${id}`,
+          method : "GET",
+        }
+      }
+    })
   }),
 });
 
-export const { useGetAssignmentsQuery } = assignmentApi;
+export const { useGetAssignmentsQuery , useGetAssignmentDetailsQuery} = assignmentApi;
