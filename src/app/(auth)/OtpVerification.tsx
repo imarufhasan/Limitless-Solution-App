@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { toast } from 'sonner-native'
 
 const OtpVerification = () => {
-    const { email } = useLocalSearchParams<{ email: string }>();
+    const { email, purpose } = useLocalSearchParams<{ email: string, purpose: string }>();
     const otpRef = useRef<OTPInputHandle>(null);
     const [otp, setOtp] = React.useState("");
     const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
@@ -17,9 +17,16 @@ const OtpVerification = () => {
     const handleOtp = async () => {
         try {
             const result = await verifyOtp({ email, otp }).unwrap();
-            console.log( "result",result)
             toast.success(result?.message || "OTP verified successfully! Please login.");
-            router.replace("/(auth)/login" as any);
+
+            if (purpose === "forgot-password") {
+                router.replace({
+                    pathname: "/(auth)/resetNewPassword",
+                    params: { email },
+                });
+            } else {
+                router.replace("/(auth)/login");
+            }
         } catch (error: any) {
             toast.error(error?.data?.message || "OTP verification failed");
         }
@@ -62,14 +69,23 @@ const OtpVerification = () => {
                         onChange={(digits) => setOtp(digits.join(""))}
                     />
                 </View>
-                <View className="items-center py-4 mt-20">
+                <View className="flex-row items-center justify-center py-4 mt-20">
                     <Text className="text-[#4F4F59] text-sm">
-                        Didn't receive the code?   <TouchableOpacity onPress={handleResend} disabled={isResending}>
-                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#652D8B]">
-                                {isResending ? "Sending..." : "Resend"}
-                            </Text>
-                        </TouchableOpacity>
+                        Didn't receive the code?
                     </Text>
+
+                    <TouchableOpacity
+                        onPress={handleResend}
+                        disabled={isResending}
+                        className="ml-1"
+                    >
+                        <Text
+                            style={{ fontFamily: "Inter_600SemiBold" }}
+                            className="text-sm text-[#652D8B]"
+                        >
+                            {isResending ? "Sending..." : "Resend"}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
                 <Button text="Verify OTP" handlePress={handleOtp} isLoading={isLoading} />
             </ScrollView>

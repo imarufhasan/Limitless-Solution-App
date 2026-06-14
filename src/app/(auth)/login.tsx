@@ -3,10 +3,11 @@ import InputField from "@/components/shared/InputField";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { setCredentials } from "@/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import { validateLoginForm } from "@/utils/validation";
 import { router } from "expo-router";
 import { Lock, Mail } from "lucide-react-native";
 import { useState } from "react";
-import { Image, Text, TouchableOpacity } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -14,11 +15,21 @@ import { toast } from "sonner-native";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
 
+
+
   // 
   const handleLogin = async () => {
+    // Email and password validation
+    const errors = validateLoginForm(email, password);
+    setEmailError(errors.email ?? "");
+    setPasswordError(errors.password ?? "");
+    if (Object.keys(errors).length > 0) return;
+
     try {
       const result = await login({ email, password }).unwrap();
       dispatch(setCredentials({
@@ -36,7 +47,7 @@ export default function Login() {
 
       }
 
-    } catch (error : any) {
+    } catch (error: any) {
       toast.error(error?.data?.message || "Login failed. Please check your credentials and try again.");
     }
   }
@@ -64,10 +75,16 @@ export default function Login() {
           Icon={Mail}
           placeholder="jhon@example.com"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(val) => {
+            setEmail(val)
+            if (emailError) setEmailError("")
+          }}
           keyboardType="email-address"
           autoCapitalize="none"
         />
+        {emailError ? (
+          <Text className="text-red-500 text-xs mb-2 -mt-2">{emailError}</Text>
+        ) : null}
 
 
         <InputField
@@ -78,6 +95,11 @@ export default function Login() {
           onChangeText={setPassword}
           secureTextEntry
         />
+        {passwordError ? (
+          <Text className="text-red-500 text-xs mb-2 -mt-2">
+            {passwordError}
+          </Text>
+        ) : null}
 
 
         <TouchableOpacity onPress={() => router.push("/(auth)/forgetPassword" as any)} className="self-end mb-4">
@@ -87,15 +109,18 @@ export default function Login() {
         <Button handlePress={handleLogin} text="Login" isLoading={isLoading} />
 
         {/* Login Link */}
-        <TouchableOpacity
-          onPress={() => router.push("/(auth)/register" as any)}
-          className="items-center mb-8"
-        >
+        <View className="flex-row items-center justify-center">
           <Text className="text-sm text-gray-500">
             Don’t have an account?{" "}
-            <Text className="text-[#652D8B] font-medium">Register</Text>
+
           </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/register" as any)}
+            className=""
+          >
+            <Text className="text-[#652D8B] font-medium">Register</Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

@@ -1,3 +1,4 @@
+import { useGetProfileQuery } from '@/redux/features/auth/authApi';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { BellIcon, Calendar, Car, MapPin, MessageCircle, Phone } from 'lucide-react-native';
@@ -154,6 +155,8 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
 }
 
 export default function EmployeeHome() {
+    const { data, isLoading } = useGetProfileQuery({});
+  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -170,7 +173,7 @@ export default function EmployeeHome() {
                 Welcome back,
               </Text>
               <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-white">
-                John Deo
+                {data?.data?.name}
               </Text>
             </View>
             <TouchableOpacity
