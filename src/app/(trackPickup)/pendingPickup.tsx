@@ -9,6 +9,7 @@ export default function pendingPickup() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { data, isLoading } = useGetAssignmentDetailsQuery({ id });
     const assignment = data?.data;
+    // console.log(assignment)
     if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

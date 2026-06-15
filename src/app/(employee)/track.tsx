@@ -26,7 +26,7 @@ export default function EmployeeTrack() {
   });
 
   const assignments = data?.data || [];
-  // console.log(assignments[0]?.assignmentId)
+  // console.log(assignments)
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>

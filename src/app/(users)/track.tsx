@@ -22,7 +22,7 @@ export default function Track() {
   const { data, isLoading } = useGetVehicleOrdersQuery({ page: 1, limit: 20, status: activeTab, }, { refetchOnMountOrArgChange: true, });
 
   const orders = data?.data || [];
-  console.log("Orders:", orders);
+  // console.log("Orders:", orders);
 
   const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
   const [cancelQuote, { isLoading: isCancelling }] = useCancelQuoteMutation();
@@ -101,7 +101,8 @@ export default function Track() {
               </View>
             }
             renderItem={({ item }) => {
-              const config = statusConfig[item.status];
+              // console.log("item status:", item.status);
+              const config = statusConfig[item.status] ?? statusConfig['pending'];
               return (
                 <View style={{
                   backgroundColor: 'white',

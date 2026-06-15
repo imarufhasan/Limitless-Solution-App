@@ -13,8 +13,25 @@ type Props = {
     assignment: any
 };
 
-export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon, onPress, status = "Ongoing", showDecline = false, onDecline , assignment }: Props) {
+export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon, onPress, status = "Ongoing", showDecline = false, onDecline, assignment }: Props) {
     console.log("assignment screen", assignment)
+    const customerInfo = [
+        { label: "Name", value: assignment?.customerName },
+        { label: "Address", value: assignment?.customerAddress },
+        { label: "Contact Number", value: assignment?.customerPhoneNumber },
+        { label: "Email", value: assignment?.customerEmail },
+        {
+            label: "Date",
+            value: assignment?.orderPlacedAt
+                ? new Date(assignment.orderPlacedAt).toLocaleDateString()
+                : "-",
+        },
+    ];
+
+    const formattedOrderNumber = assignment?.orderNumber
+  ? `ORD-${assignment.orderNumber.split("-").pop()}`
+  : "-";
+
     return (
         <SafeAreaView className="flex-1 bg-[#F8F6FA] " edges={['top']}>
             <ScrollView
@@ -36,7 +53,7 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                             Pickup Details
                         </Text>
                         <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400">
-                            Request #1235
+                            Request {formattedOrderNumber}
                         </Text>
                     </View>
 
@@ -83,7 +100,7 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                         </Text>
                         <View className="bg-yellow-50 rounded-lg p-3">
                             <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-yellow-800">
-                                Please call 10 minutes before arrival.{'\n'}Gate code: #1234
+                                Please call 10 minutes before arrival.
                             </Text>
                         </View>
                     </View>
