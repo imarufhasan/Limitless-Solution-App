@@ -24,8 +24,42 @@ const assignmentApi = baseApi.injectEndpoints({
           method : "GET",
         }
       }
+    }),
+    acceptAssignment : builder.mutation({
+      query  : ({id})=>{
+        return{
+          url : `/assignment/accept/${id}`,
+          method : "POST"
+        }
+      }
+    }),
+    onTheWayStatus :  builder.mutation({
+      query : ({id})=>{
+        return{
+          url : `/order/on-the-way/${id}`,
+          method : "POST"
+        }
+      }
+    }),
+    receivedOrderStauts :  builder.mutation({
+      query : ({id})=>{
+        return{
+          url : `/order/received/${id}`,
+          method : "POST"
+        }
+      }
+    }),
+    completeOrderStatus :  builder.mutation({
+      query : ({id})=>{
+        return{
+          url : `/order/complete/pickup/${id}`,
+          method : "POST"
+        }
+      }
     })
   }),
 });
 
-export const { useGetAssignmentsQuery , useGetAssignmentDetailsQuery} = assignmentApi;
+export const { useGetAssignmentsQuery , useGetAssignmentDetailsQuery , useAcceptAssignmentMutation,
+  useReceivedOrderStautsMutation, useCompleteOrderStatusMutation, useOnTheWayStatusMutation
+} = assignmentApi;

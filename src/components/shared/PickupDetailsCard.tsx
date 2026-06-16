@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { ArrowLeft, Package, User } from 'lucide-react-native';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = {
@@ -11,10 +11,21 @@ type Props = {
     showDecline?: boolean;
     onDecline?: () => void;
     assignment: any
+    isLoading?: boolean;
 };
 
-export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon, onPress, status = "Ongoing", showDecline = false, onDecline, assignment }: Props) {
-    console.log("assignment screen", assignment)
+export default function PickupDetailsCard({
+    buttonLabel,
+    buttonIcon:
+    ButtonIcon,
+    onPress,
+    status = "Ongoing",
+    showDecline = false,
+    onDecline,
+    assignment,
+    isLoading }: Props) {
+    // console.log("assignment screen", assignment?.vinNumber)
+    const { width } = Dimensions.get("window");
     const customerInfo = [
         { label: "Name", value: assignment?.customerName },
         { label: "Address", value: assignment?.customerAddress },
@@ -28,9 +39,11 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
         },
     ];
 
+    console.log("PickupDetails : " , assignment)
+
     const formattedOrderNumber = assignment?.orderNumber
-  ? `ORD-${assignment.orderNumber.split("-").pop()}`
-  : "-";
+        ? `ORD-${assignment.orderNumber.split("-").pop()}`
+        : "-";
 
     return (
         <SafeAreaView className="flex-1 bg-[#F8F6FA] " edges={['top']}>
@@ -78,12 +91,7 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                         </TouchableOpacity> */}
                     </View>
 
-                    {[
-                        { label: "Name", value: "Aaron" },
-                        { label: "Address", value: "123 Main Street, Dhaka" },
-                        { label: "Contact Number", value: "+91 98765 43210" },
-                        { label: "Date", value: "2026-04-04" },
-                    ].map((field) => (
+                    {customerInfo?.map((field) => (
                         <View key={field.label} className="mb-3">
                             <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mb-0.5">
                                 {field.label}
@@ -111,33 +119,97 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                     <View className="flex-row items-center gap-2 mb-4">
                         <Package size={18} color="#652D8B" />
                         <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">
-                            Scrap Details
+                            Vehicle Details
                         </Text>
                     </View>
 
                     <View className="flex-row gap-6 mb-3">
                         <View>
                             <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mb-0.5">Type</Text>
-                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">Iron & Copper</Text>
+                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">{assignment?.orderType}</Text>
                         </View>
                         <View>
-                            <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mb-0.5">Est. Weight</Text>
-                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">50 kg</Text>
+                            <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mb-0.5">Model</Text>
+                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">{assignment?.model}</Text>
                         </View>
                     </View>
 
                     <View className="mb-4">
-                        <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mb-0.5">Est. Value</Text>
-                        <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-[#652D8B]">$2,500</Text>
+                        <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400 mb-0.5">Year</Text>
+                        <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-[#652D8B]">{assignment?.year}</Text>
+                    </View>
+                    <View>
+                        <Text
+                            style={{ fontFamily: "Inter_400Regular" }}
+                            className="text-xs text-gray-400"
+                        >
+                            VIN Number
+                        </Text>
+
+                        <Text
+                            style={{ fontFamily: "Inter_600SemiBold" }}
+                            className="text-sm text-[#0F0B18] mb-2 mt-1"
+                        >
+                            {assignment?.vinNumber}
+                        </Text>
+                    </View>
+                    <View className="mb-4">
+                        <Text
+                            style={{ fontFamily: "Inter_400Regular" }}
+                            className="text-xs text-gray-400"
+                        >
+                            Quoted Price
+                        </Text>
+
+                        <Text
+                            style={{ fontFamily: "Inter_700Bold" }}
+                            className="text-xl text-[#652D8B]"
+                        >
+                            ${assignment?.qoutedPrice}
+                        </Text>
+                    </View>
+                    <View className="mb-4">
+                        <Text
+                            style={{ fontFamily: "Inter_400Regular" }}
+                            className="text-xs text-gray-400"
+                        >
+                            Total Price
+                        </Text>
+
+                        <Text
+                            style={{ fontFamily: "Inter_700Bold" }}
+                            className="text-xl text-[#652D8B]"
+                        >
+                            ${assignment?.totalPrice}
+                        </Text>
                     </View>
 
-                    <View className="rounded-xl overflow-hidden">
-                        <Image
-                            source={require('@/assets/images/car.png')}
-                            style={{ width: '100%', height: 160 }}
-                            resizeMode="cover"
-                        />
-                    </View>
+                    {assignment?.attachments?.length > 0 ? (
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            {assignment.attachments.map(
+                                (image: string, index: number) => (
+                                    <Image
+                                        key={index}
+                                        source={{ uri: image }}
+                                        style={{
+                                            width: width - 72,
+                                            height: 160,
+                                            borderRadius: 12,
+                                            marginRight: 12,
+                                        }}
+                                        resizeMode="cover"
+                                    />
+                                )
+                            )}
+                        </ScrollView>
+                    ) : (
+                        <View className="h-40 rounded-xl bg-gray-100 items-center justify-center">
+                            <Text>No images available</Text>
+                        </View>
+                    )}
                 </View>
 
                 {/* Button */}
@@ -179,12 +251,19 @@ export default function PickupDetailsCard({ buttonLabel, buttonIcon: ButtonIcon,
                     ) : (
                         <TouchableOpacity
                             onPress={onPress}
-                            className="bg-[#652D8B] py-3  rounded-xl flex-row items-center justify-center gap-2 mb-4"
+                            disabled={isLoading}
+                            className="bg-[#652D8B] py-3 rounded-xl flex-row items-center justify-center gap-2 mb-4"
                         >
-                            <ButtonIcon size={16} color="white" />
-                            <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-white text-sm">
-                                {buttonLabel}
-                            </Text>
+                            {isLoading ? (
+                                <ActivityIndicator size="small" color="white" />
+                            ) : (
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                    <ButtonIcon size={16} color="white" />
+                                    <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-white text-sm">
+                                        {buttonLabel}
+                                    </Text>
+                                </View>
+                            )}
                         </TouchableOpacity>
                     )}
                 </>

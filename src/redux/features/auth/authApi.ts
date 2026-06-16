@@ -53,9 +53,26 @@ const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+    contentManagement  : builder.query({
+      query : (type) =>{
+        return{
+          url : `/content/${type}`,
+          method : 'GET'
+        }
+      }
+    })
 
 
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useVerifyOtpMutation, useResendOtpMutation, useGetProfileQuery, useEditProfileMutation, useChangePasswordMutation } = authApi;
+export const { 
+  useLoginMutation, 
+  useRegisterMutation, 
+  useVerifyOtpMutation, 
+  useResendOtpMutation, 
+  useGetProfileQuery, 
+  useEditProfileMutation, 
+  useChangePasswordMutation,
+  useContentManagementQuery
+} = authApi;

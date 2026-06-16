@@ -176,7 +176,12 @@ export default function EmployeeTrack() {
                   {item.status === "accepted" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <TouchableOpacity
-                        onPress={() => router.push("/(trackPickup)/pickupDetails" as any)}
+                        onPress={() => {
+                          router.push({
+                            pathname : "/(trackPickup)/pickupDetails",
+                            params: { id: item?.assignmentId },
+                          } as any)
+                        }}
                         style={{
                           flex: 1, paddingVertical: 12, borderRadius: 50,
                           alignItems: 'center', borderWidth: 1, borderColor: '#E5E7EB',
