@@ -1,73 +1,71 @@
+import { useGetAllbannerQuery } from "@/redux/features/home/homeApi";
 import { useEffect, useRef, useState } from "react";
-import {
-    Dimensions,
-    FlatList,
-    Image,
-    View,
-} from "react-native";
+import { Dimensions, FlatList, View } from "react-native";
+import BannerItem from "../BannerItem/BannerItem";
 
 const { width } = Dimensions.get("window");
 
-const slides = [
-    {
-        id: "1",
-        image: require("@/assets/images/banner1.png"),
-    },
-    {
-        id: "2",
-        image: require("@/assets/images/banner2.png"),
-    },
-    {
-        id: "3",
-        image: require("@/assets/images/banner3.png"),
-    },
-    {
-        id: "4",
-        image: require("@/assets/images/banner1.png"),
-    },
-    {
-        id: "5",
-        image: require("@/assets/images/banner2.png"),
-    },
-];
-
 export default function Carousel() {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const flatListRef = useRef<any>(null);
+    const { data, isLoading } = useGetAllbannerQuery({});
 
+    const slides =
+        data?.data?.map((item: any) => ({
+            id: item?._id,
+            image: item?.url,
+        })) || [];
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const flatListRef = useRef<FlatList>(null);
 
     const GAP = 12;
 
-
-
+    // ✅ FIXED AUTO SLIDER (NO MEMORY LEAK)
     useEffect(() => {
+        if (slides.length <= 1) return;
+
         const interval = setInterval(() => {
-            const nextIndex = (currentIndex + 1) % slides.length;
-            flatListRef.current?.scrollToIndex({
-                index: nextIndex,
-                animated: true,
+            setCurrentIndex((prev) => {
+                const nextIndex = (prev + 1) % slides.length;
+
+                flatListRef.current?.scrollToIndex({
+                    index: nextIndex,
+                    animated: true,
+                });
+
+                return nextIndex;
             });
-            setCurrentIndex(nextIndex);
         }, 3000);
+
         return () => clearInterval(interval);
-    }, [currentIndex]);
+    }, [slides.length]);
+
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    height: 150,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            />
+        );
+    }
+
+    if (!slides.length) return null;
 
     return (
-        <View style={{ marginVertical: 10, marginHorizontal: 0 }}>
-            <View style={{
-                borderRadius: 20,
-                overflow: "hidden",
-                marginHorizontal: 0,
-            }}>
+        <View style={{ marginVertical: 10 }}>
+            <View style={{ borderRadius: 20, overflow: "hidden" }}>
                 <FlatList
                     ref={flatListRef}
                     data={slides}
+                    keyExtractor={(item) => item.id}
                     horizontal
-                    pagingEnabled={false}
-                    scrollEnabled={true}
                     showsHorizontalScrollIndicator={false}
                     decelerationRate="fast"
-                    snapToOffsets={slides.map((_, i) => i * (width - 32 + GAP))}
+                    snapToOffsets={slides.map(
+                        (_: any, i: number) => i * (width - 32 + GAP)
+                    )}
                     getItemLayout={(_, index) => ({
                         length: width - 32 + GAP,
                         offset: (width - 32 + GAP) * index,
@@ -75,44 +73,37 @@ export default function Carousel() {
                     })}
                     onMomentumScrollEnd={(e) => {
                         const index = Math.round(
-                            e.nativeEvent.contentOffset.x / (width - 32 + GAP)
+                            e.nativeEvent.contentOffset.x /
+                            (width - 32 + GAP)
                         );
                         setCurrentIndex(index);
                     }}
                     renderItem={({ item }) => (
-                        <View style={{
-                            width: width - 32,
-                            height: 150,
-                            marginRight: GAP,
-                        }}>
-                            <Image
-                                source={item.image}
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    resizeMode: "stretch",
-                                }}
-                            />
-                        </View>
+                        <BannerItem image={item?.image} />
                     )}
                 />
             </View>
 
-            {/* Dots */}
-            <View style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                gap: 6,
-                marginTop: 10,
-            }}>
-                {slides.map((item, i) => (
+            {/* DOTS */}
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: 6,
+                    marginTop: 10,
+                }}
+            >
+                {slides.map((item: any, i: number) => (
                     <View
                         key={item.id}
                         style={{
                             height: 8,
                             width: i === currentIndex ? 20 : 8,
                             borderRadius: 4,
-                            backgroundColor: i === currentIndex ? "#652D8B" : "#D1D5DB",
+                            backgroundColor:
+                                i === currentIndex
+                                    ? "#652D8B"
+                                    : "#D1D5DB",
                         }}
                     />
                 ))}

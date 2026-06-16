@@ -1,4 +1,5 @@
 import { useGetProfileQuery } from '@/redux/features/auth/authApi';
+import { useGetTaskInfoQuery } from '@/redux/features/home/homeApi';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { BellIcon, Calendar, Car, MapPin, MessageCircle, Phone } from 'lucide-react-native';
@@ -6,11 +7,7 @@ import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const stats = [
-  { id: "1", value: "1", label: "Ongoing" },
-  { id: "2", value: "5", label: "Pending" },
-  { id: "3", value: "15", label: "Completed" },
-];
+
 
 const currentTasks = [
   {
@@ -59,7 +56,7 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
       borderColor: '#F3F4F6',
     }}>
       {/* Top Row */}
-      <View  style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
         <Image
           source={item.image}
           style={{ width: 44, height: 44, borderRadius: 22, marginRight: 10 }}
@@ -117,7 +114,7 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
       </View>
 
       {/* Buttons */}
-      <View  style={{ flexDirection: 'row', gap: 12 }}>
+      <View style={{ flexDirection: 'row', gap: 12 }}>
         <TouchableOpacity onPress={() => router.push("/(trackPickup)/pickupDetails" as any)} style={{
           flex: 1,
           paddingVertical: 12,
@@ -155,8 +152,19 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
 }
 
 export default function EmployeeHome() {
-    const { data, isLoading } = useGetProfileQuery({});
-  
+  const { data, isLoading } = useGetProfileQuery({});
+  const { data: getTaskInfo, isLoading: taskLoading } = useGetTaskInfoQuery({})
+
+  const stats = [
+    { id: "1", value: getTaskInfo?.data?.overview?.accepted || 0, label: "Ongoing" },
+    { id: "2", value:  getTaskInfo?.data?.overview?.pending || 0, label: "Pending" },
+    { id: "3", value:  getTaskInfo?.data?.overview?.completed || 0, label: "Completed" },
+    { id: "4", value:  getTaskInfo?.data?.overview?.cancelled || 0, label: "Cancelled" },
+  ];
+
+  console.log("Task info", getTaskInfo?.data?.overview)
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -189,7 +197,7 @@ export default function EmployeeHome() {
             {stats.map((stat) => (
               <View
                 key={stat.id}
-                className="flex-1 rounded-xl p-3 items-center"
+                className="flex-1 rounded-xl p-2 items-center"
                 style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
               >
                 <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-white">
