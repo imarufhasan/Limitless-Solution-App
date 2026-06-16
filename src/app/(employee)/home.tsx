@@ -4,47 +4,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { BellIcon, Calendar, Car, MapPin, MessageCircle, Phone } from 'lucide-react-native';
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
-const currentTasks = [
-  {
-    id: "1",
-    name: "Aaron",
-    email: "aaron@gmail.com",
-    address: "123 Main Street, Dhaka",
-    phone: "+91 98765 43212",
-    date: "2026-04-04",
-    weight: "75 lbs",
-    price: "$3,200",
-    status: "Ongoing",
-    image: require("@/assets/images/user.png"),
-  },
-];
 
-const nextTasks = [
-  {
-    id: "1",
-    name: "Nahid",
-    email: "nahid@gmail.com",
-    address: "123 Main Street, Dhaka",
-    phone: "+91 98765 43212",
-    date: "2026-04-04",
-    weight: "75 lbs",
-    price: "$3,200",
-    status: "Pending",
-    image: require("@/assets/images/user.png"),
-  },
-];
 
 const statusConfig: Record<string, { bg: string; text: string }> = {
   Ongoing: { bg: "#652D8B", text: "#FFFFFF" },
   Pending: { bg: "#FEF9C3", text: "#854D0E" },
 };
 
-function TaskCard({ item }: { item: typeof currentTasks[0] }) {
+function TaskCard({ item }: { item: any }) {
   const config = statusConfig[item.status];
   return (
     <View className="border  border-[#b6b6ce]" style={{
@@ -57,10 +29,7 @@ function TaskCard({ item }: { item: typeof currentTasks[0] }) {
     }}>
       {/* Top Row */}
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-        <Image
-          source={item.image}
-          style={{ width: 44, height: 44, borderRadius: 22, marginRight: 10 }}
-        />
+       
         <View style={{ flex: 1 }}>
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
             {item.name}
@@ -155,14 +124,50 @@ export default function EmployeeHome() {
   const { data, isLoading } = useGetProfileQuery({});
   const { data: getTaskInfo, isLoading: taskLoading } = useGetTaskInfoQuery({})
 
+  const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
+  const nextAssignment =getTaskInfo?.data?.pendingAssignment;
+
+  console.log(getTaskInfo?.data)
+
+  const currentTask = currentAssignment
+    ? {
+      id: currentAssignment._id,
+      name: currentAssignment.customerName,
+      email: currentAssignment.customerEmail,
+      address: currentAssignment.pickupAddress,
+      phone: currentAssignment.customerPhoneNumber,
+      date: currentAssignment.orderPlacedAt,
+      weight: currentAssignment.orderType,
+      price: `$${currentAssignment.totalPrice}`,
+      status: "Ongoing",
+      // image: require("@/assets/images/user.png"),
+    }
+    : null;
+
+    console.log(currentAssignment)
+
+  const nextTask = nextAssignment
+    ? {
+      id: nextAssignment._id,
+      name: nextAssignment.customerName,
+      email: nextAssignment.customerEmail,
+      address: nextAssignment.pickupAddress,
+      phone: nextAssignment.customerPhoneNumber,
+      date: nextAssignment.orderPlacedAt,
+      weight: nextAssignment.orderType,
+      price: `$${nextAssignment.totalPrice}`,
+      status: "Pending",
+      // image: require("@/assets/images/user.png"),
+    }
+    : null;
+
   const stats = [
     { id: "1", value: getTaskInfo?.data?.overview?.accepted || 0, label: "Ongoing" },
-    { id: "2", value:  getTaskInfo?.data?.overview?.pending || 0, label: "Pending" },
-    { id: "3", value:  getTaskInfo?.data?.overview?.completed || 0, label: "Completed" },
-    { id: "4", value:  getTaskInfo?.data?.overview?.cancelled || 0, label: "Cancelled" },
+    { id: "2", value: getTaskInfo?.data?.overview?.pending || 0, label: "Pending" },
+    { id: "3", value: getTaskInfo?.data?.overview?.completed || 0, label: "Completed" },
+    { id: "4", value: getTaskInfo?.data?.overview?.cancelled || 0, label: "Cancelled" },
   ];
 
-  console.log("Task info", getTaskInfo?.data?.overview)
 
 
   return (
@@ -218,17 +223,21 @@ export default function EmployeeHome() {
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginBottom: 12 }}>
             Current Task
           </Text>
-          {currentTasks.map((item) => (
-            <TaskCard key={item.id} item={item} />
-          ))}
+          {currentTask ? (
+            <TaskCard item={currentTask} />
+          ) : (
+            <Text>No current assignment available</Text>
+          )}
 
           {/* Next Task */}
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginBottom: 12, marginTop: 8 }}>
             Next Task
           </Text>
-          {nextTasks.map((item) => (
-            <TaskCard key={item.id} item={item} />
-          ))}
+          {nextTask ? (
+            <TaskCard item={nextTask} />
+          ) : (
+            <Text>No pending assignment available</Text>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
