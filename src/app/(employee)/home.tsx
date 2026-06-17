@@ -127,7 +127,6 @@ export default function EmployeeHome() {
   const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
   const nextAssignment =getTaskInfo?.data?.pendingAssignment;
 
-  console.log(getTaskInfo?.data)
 
   const currentTask = currentAssignment
     ? {
@@ -144,7 +143,6 @@ export default function EmployeeHome() {
     }
     : null;
 
-    console.log(currentAssignment)
 
   const nextTask = nextAssignment
     ? {

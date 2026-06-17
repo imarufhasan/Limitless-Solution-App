@@ -47,7 +47,6 @@ export default function Register() {
       }).unwrap();
 
       toast.success(result?.message || "Registration successful! Please verify your email.");
-      // console.log(result?.message )
 
       router.push({
         pathname: "/(auth)/OtpVerification",
@@ -58,9 +57,7 @@ export default function Register() {
       } as any);
 
     } catch (error: any) {
-      // console.error("Register error:", error);
       toast.error(error?.data?.message || "Registration failed. Please try again.");
-      //  console.log(error?.data?.message )
     }
   };
 

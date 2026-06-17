@@ -39,7 +39,6 @@ export default function PickupDetailsCard({
         },
     ];
 
-    console.log("PickupDetails : " , assignment)
 
     const formattedOrderNumber = assignment?.orderNumber
         ? `ORD-${assignment.orderNumber.split("-").pop()}`

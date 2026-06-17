@@ -13,10 +13,7 @@ export default function HomeScreen() {
     return () => clearTimeout(timer);
   }, []);
 
-  // useEffect(() => {
-  //   console.log("token:", token);
-  //   console.log("user:", user);
-  // }, [token, user]);
+ 
 
   if (ready) {
       if (token && user) {

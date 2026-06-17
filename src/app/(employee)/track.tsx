@@ -26,7 +26,8 @@ export default function EmployeeTrack() {
   });
 
   const assignments = data?.data || [];
-  // console.log(assignments)
+
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
@@ -177,10 +178,22 @@ export default function EmployeeTrack() {
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <TouchableOpacity
                         onPress={() => {
-                          router.push({
-                            pathname : "/(trackPickup)/pickupDetails",
-                            params: { id: item?.assignmentId },
-                          } as any)
+                          if (item?.orderStatus === 'on_the_way') {
+                            router.push({
+                              pathname: "/(trackPickup)/pickupReceived",
+                              params: { id: item?.assignmentId },
+                            } as any);
+                          } else if(item?.orderStatus === 'received') {
+                            router.push({
+                              pathname: "/(trackPickup)/pickupCompleted",
+                              params: { id: item?.assignmentId },
+                            } as any);
+                          } else {
+                             router.push({
+                              pathname: "/(trackPickup)/pickupDetails",
+                              params: { id: item?.assignmentId },
+                            } as any)
+                          }
                         }}
                         style={{
                           flex: 1, paddingVertical: 12, borderRadius: 50,

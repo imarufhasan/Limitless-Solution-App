@@ -12,7 +12,6 @@ export default function pendingPickup() {
     const [acceptAssignment , {isLoading : acceptAssingmentLoading}] = useAcceptAssignmentMutation()
     const assignment = data?.data;
 
-    // console.log("Check again", assignment)
 
     const handleAcceptAssignment = async(id : string)=>{
       try {
