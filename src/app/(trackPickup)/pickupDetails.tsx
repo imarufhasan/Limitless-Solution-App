@@ -1,17 +1,30 @@
 import PickupDetailsCard from "@/components/shared/PickupDetailsCard";
 import { useGetAssignmentDetailsQuery, useOnTheWayStatusMutation } from "@/redux/features/employee/assignmentApi";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { CheckCircle, Navigation } from "lucide-react-native";
+import { useCallback } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { toast } from "sonner-native";
 
 export default function PickupDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, isLoading } = useGetAssignmentDetailsQuery({ id });
+  const { data, isLoading , refetch } = useGetAssignmentDetailsQuery({ id });
   const [onTheWay, { isLoading: OTGLoading }] = useOnTheWayStatusMutation()
   const assignment = data?.data;
 
+  useFocusEffect(
+    useCallback(() => {
+      console.log("MyCloset Screen Focused");
 
+      refetch()
+        .then((res) => {
+          console.log("Fresh MyCloset Response: ", res?.data);
+        })
+        .catch((err) => {
+          console.log("MyCloset Error:", err);
+        });
+    }, []),
+  );
 
   const handleChangeStatus = async (id: string) => {
     try {

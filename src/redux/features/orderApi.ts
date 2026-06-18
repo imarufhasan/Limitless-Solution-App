@@ -51,7 +51,22 @@ const orderApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Request'],
         }),
+        getOrderHistory: builder.query({
+            query: ({ id }) => {
+                return {
+                    url: `/order-history/${id}`,
+                    method: 'GET'
+                }
+            }
+        })
     }),
 });
 
-export const { useCreateVehicleOrderMutation, useGetVehicleOrdersQuery, useAcceptQuoteMutation, useCancelQuoteMutation , useCreateMetalOrderMutation } = orderApi;
+export const { 
+    useCreateVehicleOrderMutation, 
+    useGetVehicleOrdersQuery, 
+    useAcceptQuoteMutation, 
+    useCancelQuoteMutation, 
+    useCreateMetalOrderMutation, 
+    useGetOrderHistoryQuery 
+} = orderApi;

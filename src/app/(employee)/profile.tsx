@@ -39,29 +39,7 @@ export default function Profile() {
           Profile
         </Text>
 
-        {/* Avatar */}
-        <View className="items-center mb-8">
-          {/* <View style={{
-            width: 90,
-            height: 90,
-            borderRadius: 45,
-            overflow: 'hidden',
-            borderWidth: 1,
-            borderColor: '#F0EAF3',
-          }}>
-            <Image
-              source={require('@/assets/images/user2.png')}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="cover"
-            />
-          </View> */}
-          <Text
-            style={{ fontFamily: "Inter_600SemiBold" }}
-            className="text-lg text-[#0F0B18] mt-3"
-          >
-            Jhon Deo
-          </Text>
-        </View>
+      
 
         {/* Menu Items */}
         <View style={{

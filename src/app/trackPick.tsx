@@ -1,6 +1,7 @@
-import { router } from 'expo-router';
+import { useGetOrderHistoryQuery } from '@/redux/features/orderApi';
+import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, CheckCircle, MapPin, MessageSquareMore, PhoneCall } from 'lucide-react-native';
-import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const steps = [
@@ -36,12 +37,20 @@ const steps = [
 ];
 
 export default function TrackPickup() {
+
+    const { id } = useLocalSearchParams<{ id: string }>()
+    const { data, isLoading } = useGetOrderHistoryQuery({ id })
+
+    const pickUpData = data?.data
+
+    const histories = [...(pickUpData?.histories || [])].reverse();
+
+
     return (
         <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
 
 
-                {/* Back + Title */}
                 <View className="flex-row items-center gap-3 mb-8 px-4">
                     <TouchableOpacity
                         onPress={() => router.back()}
@@ -54,9 +63,9 @@ export default function TrackPickup() {
                         <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl">
                             Track Pickup
                         </Text>
-                        <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-[#4F4F59]">
+                        {/* <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-[#4F4F59]">
                             Request #1235
-                        </Text>
+                        </Text> */}
                     </View>
                 </View>
                 {/* Header */}
@@ -71,7 +80,7 @@ export default function TrackPickup() {
                     {/* Address Box inside header */}
                     <View className="bg-white rounded-xl mx-4 px-4 py-3">
                         <Text style={{ fontFamily: "Inter_500Medium" }} className="text-sm text-[#0F0B18]">
-                            123 Main Street, Dhaka
+                            {pickUpData?.address}
                         </Text>
                     </View>
                 </View>
@@ -85,13 +94,13 @@ export default function TrackPickup() {
                         style={{ elevation: 2 }}
                     >
                         <View className="flex-row items-center gap-3">
-                            <Image
+                            {/* <Image
                                 source={require('@/assets/images/user.png')}
                                 style={{ width: 48, height: 48, borderRadius: 24 }}
-                            />
+                            /> */}
                             <View>
                                 <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">
-                                    Michael
+                                    {pickUpData?.employeeName}
                                 </Text>
                                 <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400">
                                     Employee
@@ -102,7 +111,7 @@ export default function TrackPickup() {
                             <TouchableOpacity onPress={() => router.push('/chat/[userId]')} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
                                 <MessageSquareMore size={18} color="#652D8B" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => Linking.openURL('tel:+919876543212')} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
+                            <TouchableOpacity onPress={() => Linking.openURL(`tel:${pickUpData?.employeePhoneNumber}`)} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
                                 <PhoneCall size={18} color="#652D8B" />
                             </TouchableOpacity>
                         </View>
@@ -114,44 +123,33 @@ export default function TrackPickup() {
                             Pickup Status
                         </Text>
 
-                        {steps.map((step, i) => (
-                            <View key={step.id} className="flex-row gap-4">
-                                {/* Dot & Line */}
+                        {histories?.map((step: any, index: number) => (
+                            <View key={step._id} className="flex-row gap-4">
+                                {/* Timeline */}
                                 <View className="items-center">
-                                    <View style={{
-                                        width: 32,
-                                        height: 32,
-                                        borderRadius: 16,
-                                        backgroundColor: step.completed ? '#10B981' : '#F3F4F6',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        borderWidth: step.completed ? 0 : 2,
-                                        borderColor: '#E5E7EB',
-                                    }}>
-                                        {step.completed ? (
-                                            <CheckCircle size={18} color="white" />
-                                        ) : (
-                                            <View style={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: '#D1D5DB',
-                                            }} />
-                                        )}
+                                    <View
+                                        style={{
+                                            width: 32,
+                                            height: 32,
+                                            borderRadius: 16,
+                                            backgroundColor: "#10B981",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        <CheckCircle size={18} color="white" />
                                     </View>
 
-                                    {i < steps.length - 1 && (
-                                        <View style={{ alignItems: 'center', flex: 1, minHeight: 50, marginVertical: 2 }}>
-                                            {Array.from({ length: 7 }).map((_, j) => (
-                                                <View key={j} style={{
-                                                    width: 2,
-                                                    height: 6,
-                                                    backgroundColor: steps[i + 1].completed ? '#10B981' : '#E5E7EB',
-                                                    marginBottom: 3,
-                                                    borderRadius: 1,
-                                                }} />
-                                            ))}
-                                        </View>
+                                    {index < histories.length - 1 && (
+                                        <View
+                                            style={{
+                                                width: 2,
+                                                flex: 1,
+                                                minHeight: 50,
+                                                backgroundColor: "#10B981",
+                                                marginTop: 4,
+                                            }}
+                                        />
                                     )}
                                 </View>
 
@@ -159,24 +157,17 @@ export default function TrackPickup() {
                                 <View className="flex-1 pb-5">
                                     <Text
                                         style={{ fontFamily: "Inter_600SemiBold" }}
-                                        className={`text-sm mb-1 ${step.completed ? 'text-[#0F0B18]' : 'text-gray-400'}`}
+                                        className="text-sm text-[#0F0B18] mb-1"
                                     >
                                         {step.title}
                                     </Text>
+
                                     <Text
                                         style={{ fontFamily: "Inter_400Regular" }}
-                                        className="text-xs text-gray-400 leading-5"
+                                        className="text-xs text-gray-500 leading-5"
                                     >
-                                        {step.description}
+                                        {step.note}
                                     </Text>
-                                    {step.subDescription && (
-                                        <Text
-                                            style={{ fontFamily: "Inter_600SemiBold" }}
-                                            className="text-xs text-[#652D8B] mt-0.5"
-                                        >
-                                            {step.subDescription}
-                                        </Text>
-                                    )}
                                 </View>
                             </View>
                         ))}

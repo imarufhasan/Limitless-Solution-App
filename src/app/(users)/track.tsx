@@ -45,6 +45,7 @@ export default function Track() {
   }
 
 
+
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
       <View className="flex-1 px-4">
@@ -209,13 +210,13 @@ export default function Track() {
                   {/* Buttons */}
                   {item.status === "qouted" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
-                      <TouchableOpacity 
+                      <TouchableOpacity
                         onPress={() => handleCancelQuote(item.orderId)}
                         disabled={isCancelling}
-                      style={{
-                        flex: 1, paddingVertical: 12, borderRadius: 30,
-                        alignItems: 'center', borderWidth: 1, borderColor: '#E5E7EB',
-                      }}>
+                        style={{
+                          flex: 1, paddingVertical: 12, borderRadius: 30,
+                          alignItems: 'center', borderWidth: 1, borderColor: '#E5E7EB',
+                        }}>
                         <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#374151' }}>
                           {isCancelling ? "Cancelling..." : "Cancel Quote"}
                         </Text>
@@ -234,10 +235,15 @@ export default function Track() {
                     </View>
                   )}
 
-                  {item.status === "accepted" && (
+                  {(item.status === "accepted" || 
+                  item?.status === "on_the_way" || item?.status === "qouted" || item?.status === "completed" || item?.status === "assigned" || item?.status === "received"
+                ) && item?.deliveryType === "pickup" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <TouchableOpacity
-                        onPress={() => router.push("/trackPick" as any)}
+                        onPress={() => router.push({
+                          pathname: "/trackPick",
+                          params: { id: item?.orderId }
+                        } as any)}
                         style={{
                           flex: 1, paddingVertical: 12, borderRadius: 30,
                           alignItems: 'center', borderWidth: 1, borderColor: '#652D8B',

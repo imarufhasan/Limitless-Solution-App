@@ -1,9 +1,9 @@
 import { useGetProfileQuery } from '@/redux/features/auth/authApi';
 import { useGetTaskInfoQuery } from '@/redux/features/home/homeApi';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { BellIcon, Calendar, Car, MapPin, MessageCircle, Phone } from 'lucide-react-native';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -122,10 +122,24 @@ function TaskCard({ item }: { item: any }) {
 
 export default function EmployeeHome() {
   const { data, isLoading } = useGetProfileQuery({});
-  const { data: getTaskInfo, isLoading: taskLoading } = useGetTaskInfoQuery({})
+  const { data: getTaskInfo, isLoading: taskLoading , refetch } = useGetTaskInfoQuery({})
 
   const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
   const nextAssignment =getTaskInfo?.data?.pendingAssignment;
+
+    useFocusEffect(
+    useCallback(() => {
+      console.log("MyCloset Screen Focused");
+ 
+      refetch()
+        .then((res) => {
+          console.log("Fresh MyCloset Response: ", res?.data);
+        })
+        .catch((err) => {
+          console.log("MyCloset Error:", err);
+        });
+    }, []),
+  );
 
 
   const currentTask = currentAssignment
@@ -165,6 +179,8 @@ export default function EmployeeHome() {
     { id: "3", value: getTaskInfo?.data?.overview?.completed || 0, label: "Completed" },
     { id: "4", value: getTaskInfo?.data?.overview?.cancelled || 0, label: "Cancelled" },
   ];
+
+  // console.log(getTaskInfo?.data?.overview)
 
 
 
