@@ -1,43 +1,33 @@
+import { useGetMyConversationQuery } from '@/redux/features/socketApis/socketApi';
 import { router } from 'expo-router';
 import { Search } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const conversations = [
-  {
-    id: "1",
-    name: "Admin Maria",
-    role: "Admin",
-    message: "What's update?",
-    time: "10 min ago",
-    unread: 2,
-    image: require("@/assets/images/user.png"),
-  },
-  {
-    id: "2",
-    name: "Aaron",
-    role: "Customer",
-    message: "I will be home by 2 PM. Please come then.",
-    time: "10 min ago",
-    unread: 2,
-    image: require("@/assets/images/user.png"),
-  },
-  {
-    id: "3",
-    name: "Nahid",
-    role: "Customer",
-    message: "Where are you?",
-    time: "1 hour ago",
-    unread: 0,
-    image: require("@/assets/images/user.png"),
-  },
-];
 
 export default function Chat() {
+  const { data, isLoading } = useGetMyConversationQuery({});
   const [search, setSearch] = useState("");
 
-  const filtered = conversations.filter((c) =>
+  const conversations = (data?.data ?? []).map((item: any) => ({
+    id: item.conversationId,
+    name: item.opponentName,
+    role: item.opponentRole,
+    message: item.lastMessage?.text ?? "No messages yet",
+    time: item.lastMessage?.createdAt
+      ? new Date(item.lastMessage.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "",
+    unread: item.unreadMessages ?? 0,
+
+  }));
+
+  // console.log("Here is chat",data?.data)
+
+  const filtered = conversations.filter((c: any) =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -82,7 +72,7 @@ export default function Chat() {
         </View>
       </View>
 
-      {/* List */} 
+      {/* List */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
@@ -91,7 +81,7 @@ export default function Chat() {
         ListEmptyComponent={
           <View style={{ alignItems: 'center', marginTop: 60 }}>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#9CA3AF' }}>
-              No conversations found
+              {isLoading ? "Loading..." : "No conversations found"}
             </Text>
           </View>
         }
@@ -109,11 +99,6 @@ export default function Chat() {
               borderColor: '#F3F4F6',
             }}
           >
-            {/* Avatar */}
-            <Image
-              source={item.image}
-              style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }}
-            />
 
             {/* Content */}
             <View style={{ flex: 1 }}>

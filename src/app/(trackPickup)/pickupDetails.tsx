@@ -18,10 +18,10 @@ export default function PickupDetails() {
 
       refetch()
         .then((res) => {
-          console.log("Fresh MyCloset Response: ", res?.data);
+          // console.log("Fresh MyCloset Response: ", res?.data);
         })
         .catch((err) => {
-          console.log("MyCloset Error:", err);
+          // console.log("MyCloset Error:", err);
         });
     }, []),
   );

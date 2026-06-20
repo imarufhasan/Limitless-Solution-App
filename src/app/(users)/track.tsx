@@ -235,33 +235,42 @@ export default function Track() {
                     </View>
                   )}
 
-                  {(item.status === "accepted" || 
-                  item?.status === "on_the_way" || item?.status === "qouted" || item?.status === "completed" || item?.status === "assigned" || item?.status === "received"
-                ) && item?.deliveryType === "pickup" && (
-                    <View style={{ flexDirection: 'row', gap: 12 }}>
-                      <TouchableOpacity
-                        onPress={() => router.push({
-                          pathname: "/trackPick",
-                          params: { id: item?.orderId }
-                        } as any)}
-                        style={{
-                          flex: 1, paddingVertical: 12, borderRadius: 30,
-                          alignItems: 'center', borderWidth: 1, borderColor: '#652D8B',
-                        }}>
-                        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#652D8B' }}>
-                          Track
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={{
-                        flex: 1, paddingVertical: 12, borderRadius: 30,
-                        alignItems: 'center', backgroundColor: '#652D8B',
-                      }}>
-                        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
-                          Chat
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
+                  {(item.status === "accepted" ||
+                    item?.status === "on_the_way" || item?.status === "qouted" || item?.status === "completed" || item?.status === "assigned" || item?.status === "received"
+                  ) && item?.deliveryType === "pickup" && (
+                      <View style={{ flexDirection: 'row', gap: 12 }}>
+                        <TouchableOpacity
+                          onPress={() => router.push({
+                            pathname: "/trackPick",
+                            params: { id: item?.orderId }
+                          } as any)}
+                          style={{
+                            flex: 1, paddingVertical: 12, borderRadius: 30,
+                            alignItems: 'center', borderWidth: 1, borderColor: '#652D8B',
+                          }}>
+                          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#652D8B' }}>
+                            Track
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          disabled={!item?.conversationId}
+                          onPress={() => {
+                            if (!item?.conversationId) return;
+                            router.push({
+                              pathname: '/chat/[userId]',
+                              params: { userId: item.conversationId }
+                            } as any)
+                          }}
+                          style={{
+                            flex: 1, paddingVertical: 12, borderRadius: 30,
+                            alignItems: 'center', backgroundColor: '#652D8B',
+                          }}>
+                          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
+                            Chat
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                 </View>
               );
             }}

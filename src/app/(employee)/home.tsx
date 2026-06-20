@@ -18,6 +18,7 @@ const statusConfig: Record<string, { bg: string; text: string }> = {
 
 function TaskCard({ item }: { item: any }) {
   const config = statusConfig[item.status];
+
   return (
     <View className="border  border-[#b6b6ce]" style={{
       backgroundColor: 'white',
@@ -31,7 +32,7 @@ function TaskCard({ item }: { item: any }) {
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
        
         <View style={{ flex: 1 }}>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
+          <Text className='uppercase' style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
             {item.name}
           </Text>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: '#6B7280' }}>
@@ -84,7 +85,11 @@ function TaskCard({ item }: { item: any }) {
 
       {/* Buttons */}
       <View style={{ flexDirection: 'row', gap: 12 }}>
-        <TouchableOpacity onPress={() => router.push("/(trackPickup)/pickupDetails" as any)} style={{
+        <TouchableOpacity onPress={() => router.push({
+          pathname : "/(trackPickup)/pickupDetails",
+          params : { id  : item?.id}
+
+        } as any)} style={{
           flex: 1,
           paddingVertical: 12,
           borderRadius: 50,
@@ -129,11 +134,11 @@ export default function EmployeeHome() {
 
     useFocusEffect(
     useCallback(() => {
-      console.log("MyCloset Screen Focused");
+      // console.log("MyCloset Screen Focused");
  
       refetch()
         .then((res) => {
-          console.log("Fresh MyCloset Response: ", res?.data);
+          // console.log("Fresh MyCloset Response: ", res?.data);
         })
         .catch((err) => {
           console.log("MyCloset Error:", err);
@@ -153,7 +158,6 @@ export default function EmployeeHome() {
       weight: currentAssignment.orderType,
       price: `$${currentAssignment.totalPrice}`,
       status: "Ongoing",
-      // image: require("@/assets/images/user.png"),
     }
     : null;
 
@@ -169,7 +173,6 @@ export default function EmployeeHome() {
       weight: nextAssignment.orderType,
       price: `$${nextAssignment.totalPrice}`,
       status: "Pending",
-      // image: require("@/assets/images/user.png"),
     }
     : null;
 
@@ -180,7 +183,6 @@ export default function EmployeeHome() {
     { id: "4", value: getTaskInfo?.data?.overview?.cancelled || 0, label: "Cancelled" },
   ];
 
-  // console.log(getTaskInfo?.data?.overview)
 
 
 
@@ -199,7 +201,7 @@ export default function EmployeeHome() {
               <Text style={{ fontFamily: "Inter_400Regular" }} className="text-sm text-purple-200">
                 Welcome back,
               </Text>
-              <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-white">
+              <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-white ">
                 {data?.data?.name}
               </Text>
             </View>

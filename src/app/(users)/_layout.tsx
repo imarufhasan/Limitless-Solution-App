@@ -1,4 +1,5 @@
 import AnimatedTabIcon from '@/components/shared/AnimatedTabIcon';
+import { useSocket } from '@/hooks/useSocket';
 import { Tabs } from 'expo-router';
 import { Home, Package, TrendingUp, User } from 'lucide-react-native';
 import React from 'react';
@@ -6,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function UserTabs() {
     const insets = useSafeAreaInsets();
+    useSocket();
     return (
         <Tabs
             screenOptions={{

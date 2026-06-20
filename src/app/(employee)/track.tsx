@@ -35,7 +35,7 @@ export default function EmployeeTrack() {
 
         {/* Header */}
         <Text style={{ fontFamily: "Inter_700Bold", fontSize: 28, color: '#0F0B18', marginTop: 8, marginBottom: 16 }}>
-          Track Pickups
+          Track Pickup
         </Text>
 
         {/* Tabs */}
@@ -174,6 +174,8 @@ export default function EmployeeTrack() {
                   </View>
 
                   {/* Accepted Buttons */}
+
+
                   {item.status === "accepted" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <TouchableOpacity
@@ -183,13 +185,13 @@ export default function EmployeeTrack() {
                               pathname: "/(trackPickup)/pickupReceived",
                               params: { id: item?.assignmentId },
                             } as any);
-                          } else if(item?.orderStatus === 'received') {
+                          } else if (item?.orderStatus === 'received') {
                             router.push({
                               pathname: "/(trackPickup)/pickupCompleted",
                               params: { id: item?.assignmentId },
                             } as any);
                           } else {
-                             router.push({
+                            router.push({
                               pathname: "/(trackPickup)/pickupDetails",
                               params: { id: item?.assignmentId },
                             } as any)
@@ -206,12 +208,22 @@ export default function EmployeeTrack() {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => router.push(`/chat/${item.customerId}` as any)}
+                        disabled={!item?.conversationId}
+                        onPress={() => {
+                          if (!item?.conversationId) return;
+                          router.push({
+                            pathname: '/chat/[userId]',
+                            params: { userId: item.conversationId }
+                          } as any)
+                        }}
                         style={{
                           flex: 1, paddingVertical: 12, borderRadius: 50,
-                          alignItems: 'center', backgroundColor: '#652D8B',
+                          alignItems: 'center',
+                          backgroundColor: item?.conversationId ? '#652D8B' : '#C4C4C4',
                           flexDirection: 'row', justifyContent: 'center', gap: 6,
-                        }}>
+                          opacity: item?.conversationId ? 1 : 0.6,
+                        }}
+                      >
                         <MessageCircle size={16} color="white" />
                         <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
                           Chat

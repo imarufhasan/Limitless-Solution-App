@@ -6,6 +6,7 @@ type AuthState = {
   user: {
     email: string;
     role: 'customer' | 'staff' | null;
+    _id : string | null;
   } | null;
 };
 

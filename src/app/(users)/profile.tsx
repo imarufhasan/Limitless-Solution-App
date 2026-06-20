@@ -1,27 +1,48 @@
 import { logout } from '@/redux/features/auth/authSlice';
+import { useCreateSupportConversationMutation } from '@/redux/features/socketApis/socketApi';
 import { useAppDispatch } from '@/redux/hooks';
 import { persistor } from '@/redux/store';
+import { disconnectSocket } from '@/socket/socket';
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const menuItems = [
-  { id: "1", title: "Profile Setting", icon: User, onPress: () => router.push("/(settings)/editProfile" as any) },
-  { id: "2", title: "Change password", icon: Lock, onPress: () => router.push("/(settings)/changePasswordFromSettings" as any) },
-  { id: "3", title: "Support", icon: HelpCircle, onPress: () => router.push("/(settings)/support" as any) },
-  { id: "4", title: "About Us", icon: Globe, onPress: () => router.push("/(settings)/about-us" as any) },
-  { id: "5", title: "Privacy Policy", icon: Shield, onPress: () => router.push("/(settings)/privacyPolicy" as any) },
-  { id: "6", title: "Terms and Conditions", icon: ScrollText, onPress: () => router.push("/(settings)/termsCondition" as any) },
-];
+
 
 export default function Profile() {
 
   const dispatch = useAppDispatch();
+  const [createSupportConversation, { isLoading }] = useCreateSupportConversationMutation({})
+
+  const handleSupport = async () => {
+    // console.log("cliuck")
+    try {
+      const res = await createSupportConversation({}).unwrap();
+      router.push({
+        pathname: "/(settings)/support",
+        params: {
+          conversationId: res.data._id,
+        },
+      });
+    } catch (error) {
+      console.log("Support Error:", error);
+    }
+  };
+
+  const menuItems = [
+    { id: "1", title: "Profile Setting", icon: User, onPress: () => router.push("/(settings)/editProfile" as any) },
+    { id: "2", title: "Change password", icon: Lock, onPress: () => router.push("/(settings)/changePasswordFromSettings" as any) },
+    { id: "3", title: "Support", icon: HelpCircle, onPress: () => handleSupport() },
+    { id: "4", title: "About Us", icon: Globe, onPress: () => router.push("/(settings)/about-us" as any) },
+    { id: "5", title: "Privacy Policy", icon: Shield, onPress: () => router.push("/(settings)/privacyPolicy" as any) },
+    { id: "6", title: "Terms and Conditions", icon: ScrollText, onPress: () => router.push("/(settings)/termsCondition" as any) },
+  ];
 
   const handleLogout = async () => {
     await persistor.purge();
     dispatch(logout());
+    disconnectSocket();
     router.replace("/onboarding" as any);
   }
   return (
@@ -31,8 +52,7 @@ export default function Profile() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 20,
-          // flexGrow: 1,
-          // justifyContent: 'center',
+
         }}
       >
         {/* Header */}
