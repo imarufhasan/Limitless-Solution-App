@@ -30,7 +30,7 @@ function TaskCard({ item }: { item: any }) {
     }}>
       {/* Top Row */}
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-       
+
         <View style={{ flex: 1 }}>
           <Text className='uppercase' style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
             {item.name}
@@ -86,8 +86,8 @@ function TaskCard({ item }: { item: any }) {
       {/* Buttons */}
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <TouchableOpacity onPress={() => router.push({
-          pathname : "/(trackPickup)/pickupDetails",
-          params : { id  : item?.id}
+          pathname: "/(trackPickup)/pickupDetails",
+          params: { id: item?.id }
 
         } as any)} style={{
           flex: 1,
@@ -105,16 +105,26 @@ function TaskCard({ item }: { item: any }) {
             Track
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push(`/chat/${item.id}` as any)} style={{
-          flex: 1,
-          paddingVertical: 12,
-          borderRadius: 50,
-          alignItems: 'center',
-          backgroundColor: '#652D8B',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          gap: 6,
-        }}>
+        <TouchableOpacity disabled={!item?.conversationId}
+          onPress={() => {
+            if (!item?.conversationId) return;
+            router.push({
+              pathname: '/chat/[userId]',
+              params: { 
+                userId: item.conversationId,
+                name: item.name
+              }
+            } as any)
+          }} style={{
+            flex: 1,
+            paddingVertical: 12,
+            borderRadius: 50,
+            alignItems: 'center',
+            backgroundColor: '#652D8B',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            gap: 6,
+          }}>
           <MessageCircle size={16} color="white" />
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
             Chat
@@ -127,15 +137,15 @@ function TaskCard({ item }: { item: any }) {
 
 export default function EmployeeHome() {
   const { data, isLoading } = useGetProfileQuery({});
-  const { data: getTaskInfo, isLoading: taskLoading , refetch } = useGetTaskInfoQuery({})
+  const { data: getTaskInfo, isLoading: taskLoading, refetch } = useGetTaskInfoQuery({})
 
   const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
-  const nextAssignment =getTaskInfo?.data?.pendingAssignment;
+  const nextAssignment = getTaskInfo?.data?.pendingAssignment;
 
-    useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       // console.log("MyCloset Screen Focused");
- 
+
       refetch()
         .then((res) => {
           // console.log("Fresh MyCloset Response: ", res?.data);
@@ -147,6 +157,7 @@ export default function EmployeeHome() {
   );
 
 
+
   const currentTask = currentAssignment
     ? {
       id: currentAssignment._id,
@@ -154,6 +165,7 @@ export default function EmployeeHome() {
       email: currentAssignment.customerEmail,
       address: currentAssignment.pickupAddress,
       phone: currentAssignment.customerPhoneNumber,
+      conversationId: currentAssignment?.conversationId,
       date: currentAssignment.orderPlacedAt,
       weight: currentAssignment.orderType,
       price: `$${currentAssignment.totalPrice}`,
@@ -170,6 +182,7 @@ export default function EmployeeHome() {
       address: nextAssignment.pickupAddress,
       phone: nextAssignment.customerPhoneNumber,
       date: nextAssignment.orderPlacedAt,
+      conversationId: currentAssignment?.conversationId,
       weight: nextAssignment.orderType,
       price: `$${nextAssignment.totalPrice}`,
       status: "Pending",

@@ -18,10 +18,12 @@ type Message = {
 };
 
 export default function ChatScreen() {
-  const { userId } = useLocalSearchParams<{ userId: string }>();
-  const conversationId = userId; // userId param = conversationId value
+  const { userId , name } = useLocalSearchParams<{ userId: string ,  name: string }>();
+  const conversationId = userId; 
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<any>(null);
+
+  // console.log("customer Name " , name)
 
   const [input, setInput] = useState('');
   const [socketMessages, setSocketMessages] = useState<Message[]>([]);
@@ -35,6 +37,7 @@ export default function ChatScreen() {
     conversationId,
     { skip: !conversationId }
   );
+
 
   const token = useSelector((state: any) => state.auth.token); 
 
@@ -149,23 +152,18 @@ export default function ChatScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top }}>
+    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top , marginTop : 18 }}>
       {/* Header */}
       <View className="bg-[#652D8B] px-4 py-3 flex-row items-center gap-3">
         <TouchableOpacity onPress={() => router.back()}>
           <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
-        <Image
-          source={require('@/assets/images/user.png')}
-          style={{ width: 40, height: 40, borderRadius: 20 }}
-        />
+       
         <View>
           <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-white text-base">
-            Aaron
+            {name || "Unknow User"}
           </Text>
-          <Text style={{ fontFamily: 'Inter_400Regular' }} className="text-purple-200 text-xs">
-            Customer
-          </Text>
+          
         </View>
       </View>
 
