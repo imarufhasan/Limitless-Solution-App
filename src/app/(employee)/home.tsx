@@ -214,7 +214,7 @@ export default function EmployeeHome() {
           </View>
 
           {/* Stats */}
-          <View className="flex-row gap-3">
+          <View className="flex-row gap-2">
             {stats.map((stat) => (
               <View
                 key={stat.id}
@@ -224,7 +224,7 @@ export default function EmployeeHome() {
                 <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl text-white">
                   {stat.value}
                 </Text>
-                <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-purple-200">
+                <Text style={{ fontFamily: "Inter_400Regular" }} className="text-[11px] text-purple-200">
                   {stat.label}
                 </Text>
               </View>

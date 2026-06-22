@@ -93,7 +93,7 @@ export default function EmployeeTrack() {
                     if (item.status === "pending") {
                       router.push({
                         pathname: "/(trackPickup)/pendingPickup",
-                        params: { id: item?.assignmentId },
+                        params: { userId: item?.assignmentId },
                       } as any);
                     }
                   }}

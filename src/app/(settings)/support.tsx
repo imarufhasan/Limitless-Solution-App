@@ -29,7 +29,7 @@ export default function Support() {
   const { data: profileData } = useGetProfileQuery({});
   const myId = profileData?.data?._id;
 
-  console.log("employeeId" , myId)
+  // console.log("employeeId" , myId)
 
   // console.log("Support",conversationId)
 

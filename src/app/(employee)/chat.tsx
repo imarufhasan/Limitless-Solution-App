@@ -25,7 +25,7 @@ export default function Chat() {
 
   }));
 
-  // console.log("Here is chat",data?.data)
+  console.log("Here is chat",data?.data)
 
   const filtered = conversations.filter((c: any) =>
     c.name.toLowerCase().includes(search.toLowerCase())
@@ -87,7 +87,10 @@ export default function Chat() {
         }
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => router.push(`/chat/${item.id}` as any)}
+            onPress={() => router.push({
+              pathname : `/chat/[userId]`,
+              params : { userId: item.id }
+            } as any)}
             style={{
               backgroundColor: 'white',
               borderRadius: 16,
