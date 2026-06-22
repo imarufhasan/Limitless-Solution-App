@@ -8,7 +8,8 @@ const socketApi = baseApi.injectEndpoints({
                     url: "/conversation/support",
                     method: 'POST'
                 }
-            }
+            },
+            invalidatesTags: ['Conversation'],
         }),
         getConversationMessages: builder.query({
             query: (id) => ({
@@ -16,13 +17,14 @@ const socketApi = baseApi.injectEndpoints({
                 method: 'GET',
             }),
         }),
-        getMyConversation : builder.query({
-            query : ()=>{
+        getMyConversation: builder.query({
+            query: () => {
                 return {
-                    url : '/conversation/all?page=1&limit=20',
-                    method : 'GET'
+                    url: '/conversation/all?page=1&limit=20',
+                    method: 'GET'
                 }
-            }
+            },
+            providesTags: ['Conversation'],
         })
         // conversationAttachedment :  builder.mutation({
         //     query : ()
@@ -30,4 +32,4 @@ const socketApi = baseApi.injectEndpoints({
     })
 })
 
-export const { useCreateSupportConversationMutation , useGetConversationMessagesQuery , useGetMyConversationQuery } = socketApi
+export const { useCreateSupportConversationMutation, useGetConversationMessagesQuery, useGetMyConversationQuery } = socketApi

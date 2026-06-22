@@ -32,7 +32,6 @@ export default function Login() {
 
     try {
       const result = await login({ email, password }).unwrap();
-
       dispatch(setCredentials({
         token: result?.data?.accessToken,
         refreshToken: result?.data?.refreshToken,

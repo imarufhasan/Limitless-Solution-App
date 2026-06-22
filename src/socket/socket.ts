@@ -9,19 +9,18 @@ export function getSocket(): Socket | null {
 }
 
 export function initSocket(token: string): Socket {
-  // Return existing connected socket
   if (socket?.connected) return socket;
 
-  // If socket exists but disconnected, reconnect it
+  // ✅ disconnect করে নতুন socket বানাও
   if (socket) {
-    socket.connect();
-    return socket;
+    socket.disconnect();
+    socket = null;
   }
 
-  // Create fresh socket
   socket = io(baseUrl, {
-    query: { token },
+    auth: { token },          // ✅ query এর বদলে auth use করো (more secure)
     transports: ["websocket"],
+    reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 2000,
     autoConnect: true,

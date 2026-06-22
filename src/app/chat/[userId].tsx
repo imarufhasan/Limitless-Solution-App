@@ -3,7 +3,7 @@ import { useGetConversationMessagesQuery } from '@/redux/features/socketApis/soc
 import { getSocket, initSocket } from '@/socket/socket';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Image as ImageIcon, Send } from 'lucide-react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,19 +18,18 @@ type Message = {
 };
 
 export default function ChatScreen() {
-  const { userId , name } = useLocalSearchParams<{ userId: string ,  name: string }>();
-  const conversationId = userId; 
+  const { userId, name } = useLocalSearchParams<{ userId: string; name: string }>();
+  const conversationId = userId;
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<any>(null);
-
-  // console.log("customer Name " , name)
+  const typingTimeoutRef = useRef<any>(null); // ✅ typing timeout ref
 
   const [input, setInput] = useState('');
   const [socketMessages, setSocketMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState<'online' | 'offline'>('offline');
 
-  const { data: profileData } = useGetProfileQuery({});
+  const { data: profileData, refetch: profileRefetch } = useGetProfileQuery({});
   const myId = profileData?.data?._id;
 
   const { data: messagesData, refetch } = useGetConversationMessagesQuery(
@@ -38,34 +37,42 @@ export default function ChatScreen() {
     { skip: !conversationId }
   );
 
-
-  const token = useSelector((state: any) => state.auth.token); 
-
+  const token = useSelector((state: any) => state.auth.token);
 
   useEffect(() => {
-  if (token) {
-    initSocket(token); 
-  }
-}, [token]);
+    if (token) initSocket(token);
+  }, [token]);
+
+  // ✅ typing timeout cleanup
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       refetch().catch((err) => console.log('Refetch Error:', err));
+      profileRefetch();
     }, [])
   );
 
-  const restMessages: Message[] = (messagesData?.data?.messages || [])
-    .map((msg: any) => ({
-      id: msg._id,
-      text: msg.text,
-      time: new Date(msg.createdAt).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      isMine: msg.senderId === myId,
-      image: msg.attachments?.[0] || null,
-    }))
-    .reverse();
+  const restMessages: Message[] = useMemo(() => {
+    if (!myId || !messagesData?.data?.messages) return [];
+
+    return messagesData.data.messages
+      .map((msg: any) => ({
+        id: msg._id,
+        text: msg.text,
+        time: new Date(msg.createdAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        isMine: msg.senderId === myId,
+        image: msg.attachments?.[0] || null,
+      }))
+      .reverse();
+  }, [messagesData, myId]);
 
   const allMessages = [
     ...restMessages,
@@ -90,7 +97,7 @@ export default function ChatScreen() {
           hour: '2-digit',
           minute: '2-digit',
         }),
-        isMine: message.sender === myId || message.senderId === myId,
+        isMine: message.sender === myId || message.senderId === myId, // ✅ myId এখন fresh
         image: message.attachments?.[0] || null,
       };
 
@@ -120,20 +127,12 @@ export default function ChatScreen() {
       socket.off('display_typing', handleTyping);
       socket.off('participant_status', handleStatus);
     };
-  }, [conversationId]);
+  }, [conversationId, myId]); // ✅ myId dependency add
 
   const sendMessage = () => {
     if (!input.trim()) return;
     const socket = getSocket();
-
-    console.log('socket:', socket);
-    console.log('conversationId:', conversationId);
-    console.log('input:', input);
-
-    if (!socket) {
-      console.log('NO SOCKET!');
-      return;
-    }
+    if (!socket) return;
 
     socket.emit('send_message', {
       conversationId,
@@ -142,28 +141,29 @@ export default function ChatScreen() {
 
     setInput('');
   };
+
   const handleTypingChange = (text: string) => {
     setInput(text);
     const socket = getSocket();
     socket?.emit('display_typing', { conversationId, isTyping: true });
-    setTimeout(() => {
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current); // ✅ clear old timeout
+    typingTimeoutRef.current = setTimeout(() => {
       socket?.emit('display_typing', { conversationId, isTyping: false });
     }, 800);
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top , marginTop : 18 }}>
+    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top, marginTop: 18 }}>
       {/* Header */}
       <View className="bg-[#652D8B] px-4 py-3 flex-row items-center gap-3">
         <TouchableOpacity onPress={() => router.back()}>
           <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
-       
         <View>
           <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-white text-base">
-            {name || "Unknow User"}
+            {name || 'Unknown User'}
           </Text>
-          
         </View>
       </View>
 

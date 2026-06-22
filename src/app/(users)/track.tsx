@@ -22,7 +22,6 @@ export default function Track() {
   const { data, isLoading } = useGetVehicleOrdersQuery({ page: 1, limit: 20, status: activeTab, }, { refetchOnMountOrArgChange: true, });
 
   const orders = data?.data || [];
-  // console.log("Orders:", orders);
 
   const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
   const [cancelQuote, { isLoading: isCancelling }] = useCancelQuoteMutation();
@@ -258,7 +257,7 @@ export default function Track() {
                             if (!item?.conversationId) return;
                             router.push({
                               pathname: '/chat/[userId]',
-                              params: { userId: item.conversationId }
+                              params: { userId: item.conversationId, name : item?.employeeName}
                             } as any)
                           }}
                           style={{
