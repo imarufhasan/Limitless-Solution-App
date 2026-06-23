@@ -2,10 +2,11 @@ import { useGetProfileQuery } from '@/redux/features/auth/authApi';
 import { useGetTaskInfoQuery } from '@/redux/features/home/homeApi';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
+import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
 import { BellIcon, Calendar, Car, MapPin, MessageCircle, Phone } from 'lucide-react-native';
 import React, { useCallback } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -110,7 +111,7 @@ function TaskCard({ item }: { item: any }) {
             if (!item?.conversationId) return;
             router.push({
               pathname: '/chat/[userId]',
-              params: { 
+              params: {
                 userId: item.conversationId,
                 name: item.name
               }
@@ -137,6 +138,7 @@ function TaskCard({ item }: { item: any }) {
 
 export default function EmployeeHome() {
   const { data, isLoading } = useGetProfileQuery({});
+  const insets = useSafeAreaInsets()
   const { data: getTaskInfo, isLoading: taskLoading, refetch } = useGetTaskInfoQuery({})
 
   const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
@@ -145,7 +147,8 @@ export default function EmployeeHome() {
   useFocusEffect(
     useCallback(() => {
       // console.log("MyCloset Screen Focused");
-
+      setStatusBarStyle('light');
+       
       refetch()
         .then((res) => {
           // console.log("Fresh MyCloset Response: ", res?.data);
@@ -153,6 +156,9 @@ export default function EmployeeHome() {
         .catch((err) => {
           console.log("MyCloset Error:", err);
         });
+        return () => {
+        setStatusBarStyle('dark');
+      };
     }, []),
   );
 
@@ -200,13 +206,15 @@ export default function EmployeeHome() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['bottom']}>
+      <StatusBar style="light" />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <LinearGradient
           colors={['#652D8B', '#8718D2']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
+          style={{ paddingTop: insets.top + 10 }}
           className="px-5 pt-5 pb-10 rounded-b-3xl"
         >
           <View className="flex-row justify-between items-center mb-4">

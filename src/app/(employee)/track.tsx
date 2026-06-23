@@ -1,8 +1,9 @@
+import { SkeletonCard } from '@/components/shared/SkeletonBox';
 import { useGetAssignmentsQuery } from '@/redux/features/employee/assignmentApi';
 import { router } from 'expo-router';
-import { Calendar, MapPin, MessageCircle, Phone, Truck } from 'lucide-react-native';
+import { Calendar, MapPin, MessageCircle, Package, Phone, Truck } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const tabs = ["pending", "accepted", "completed"];
@@ -16,7 +17,7 @@ const statusConfig: Record<string, { bg: string; text: string; label: string }> 
 export default function EmployeeTrack() {
   const [activeTab, setActiveTab] = useState("pending");
 
-  const { data, isLoading } = useGetAssignmentsQuery({
+  const { data, isLoading , isFetching } = useGetAssignmentsQuery({
     page: 1,
     limit: 10,
     sortOrder: 'desc',
@@ -33,6 +34,7 @@ export default function EmployeeTrack() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
       <View style={{ flex: 1, paddingHorizontal: 16 }}>
+        {/* <StatusBar style="dark" /> */}
 
         {/* Header */}
         <Text style={{ fontFamily: "Inter_700Bold", fontSize: 28, color: '#0F0B18', marginTop: 8, marginBottom: 16 }}>
@@ -70,8 +72,15 @@ export default function EmployeeTrack() {
         </View>
 
         {/* Loading */}
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 40 }} />
+        {isLoading  || isFetching ? (
+          // <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 40 }} />
+
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+
         ) : (
           <FlatList
             data={assignments}
@@ -79,9 +88,22 @@ export default function EmployeeTrack() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20 }}
             ListEmptyComponent={
-              <View style={{ alignItems: 'center', marginTop: 80 }}>
-                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#9CA3AF' }}>
+              <View style={{ alignItems: 'center', marginTop: 80, gap: 12 }}>
+                <View style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 36,
+                  backgroundColor: '#F3E8FF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Package size={32} color="#652D8B" />
+                </View>
+                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
                   No {statusConfig[activeTab].label} tasks
+                </Text>
+                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: '#9CA3AF', textAlign: 'center' }}>
+                  You have no {statusConfig[activeTab].label.toLowerCase()} assignments right now
                 </Text>
               </View>
             }

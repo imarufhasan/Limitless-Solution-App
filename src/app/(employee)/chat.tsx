@@ -1,14 +1,24 @@
 import { useGetMyConversationQuery } from '@/redux/features/socketApis/socketApi';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { setStatusBarStyle } from 'expo-status-bar';
 import { Search } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default function Chat() {
   const { data, isLoading } = useGetMyConversationQuery({});
   const [search, setSearch] = useState("");
+
+   useFocusEffect(
+    useCallback(() => {
+      setStatusBarStyle('light');
+      return () => {
+        setStatusBarStyle('dark');
+      };
+    }, [])
+  );
 
 
   const conversations = (data?.data ?? []).map((item: any) => ({
@@ -26,20 +36,22 @@ export default function Chat() {
 
   }));
 
-  console.log("Here is chat",data?.data)
 
   const filtered = conversations.filter((c: any) =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
+      const insets = useSafeAreaInsets();
+
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['bottom']}>
       {/* Header */}
       <View style={{
         backgroundColor: '#652D8B',
         paddingHorizontal: 20,
-        paddingTop: 16,
         paddingBottom: 30,
+        paddingTop: insets.top + 10,
         borderBottomLeftRadius: 24,
         borderBottomRightRadius: 24,
       }}>

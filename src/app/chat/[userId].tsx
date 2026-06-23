@@ -4,9 +4,18 @@ import { getSocket, initSocket } from '@/socket/socket';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Image as ImageIcon, Send } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  AppState,
+  FlatList,
+  Image,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 type Message = {
@@ -22,7 +31,8 @@ export default function ChatScreen() {
   const conversationId = userId;
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<any>(null);
-  const typingTimeoutRef = useRef<any>(null); // ✅ typing timeout ref
+  const typingTimeoutRef = useRef<any>(null);
+  const isJoinedRef = useRef(false);
 
   const [input, setInput] = useState('');
   const [socketMessages, setSocketMessages] = useState<Message[]>([]);
@@ -31,6 +41,7 @@ export default function ChatScreen() {
 
   const { data: profileData, refetch: profileRefetch } = useGetProfileQuery({});
   const myId = profileData?.data?._id;
+  const myIdRef = useRef(myId);
 
   const { data: messagesData, refetch } = useGetConversationMessagesQuery(
     conversationId,
@@ -39,16 +50,38 @@ export default function ChatScreen() {
 
   const token = useSelector((state: any) => state.auth.token);
 
+  // myId ref sync
+  useEffect(() => {
+    myIdRef.current = myId;
+  }, [myId]);
+
+  // Socket init
   useEffect(() => {
     if (token) initSocket(token);
   }, [token]);
 
-  // ✅ typing timeout cleanup
+  // Typing timeout cleanup
   useEffect(() => {
     return () => {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, []);
+
+  // App foreground/background handle
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        const socket = getSocket();
+        if (!socket?.connected && token) {
+          initSocket(token);
+        }
+        if (conversationId) {
+          getSocket()?.emit('join', { conversationId });
+        }
+      }
+    });
+    return () => subscription.remove();
+  }, [token, conversationId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -79,16 +112,35 @@ export default function ChatScreen() {
     ...socketMessages.filter((sm) => !restMessages.some((rm) => rm.id === sm.id)),
   ];
 
+  // Socket listeners
   useEffect(() => {
     const socket = getSocket();
     if (!socket || !conversationId) return;
 
-    socket.emit('join', { conversationId });
+    const joinConversation = () => {
+      if (!isJoinedRef.current) {
+        socket.emit('join', { conversationId });
+        isJoinedRef.current = true;
+      }
+    };
+
+    if (socket.connected) {
+      joinConversation();
+    } else {
+      socket.once('connect', joinConversation);
+    }
+
+    const handleReconnect = () => {
+      isJoinedRef.current = false;
+      joinConversation();
+    };
 
     const handleNewMessage = (res: any) => {
       const message = res?.data ?? res;
       if (!message) return;
       if (message.conversation !== conversationId) return;
+
+      const currentMyId = myIdRef.current;
 
       const newMsg: Message = {
         id: message._id || Date.now().toString(),
@@ -97,7 +149,7 @@ export default function ChatScreen() {
           hour: '2-digit',
           minute: '2-digit',
         }),
-        isMine: message.sender === myId || message.senderId === myId, // ✅ myId এখন fresh
+        isMine: message.sender === currentMyId || message.senderId === currentMyId,
         image: message.attachments?.[0] || null,
       };
 
@@ -117,22 +169,38 @@ export default function ChatScreen() {
       if (data.conversationId === conversationId) setOnlineStatus(data.status);
     };
 
+    socket.on('connect', handleReconnect);
     socket.on('new_message', handleNewMessage);
     socket.on('display_typing', handleTyping);
     socket.on('participant_status', handleStatus);
 
     return () => {
       socket.emit('leave_conversation', { conversationId });
+      isJoinedRef.current = false;
+      socket.off('connect', handleReconnect);
+      socket.off('connect', joinConversation);
       socket.off('new_message', handleNewMessage);
       socket.off('display_typing', handleTyping);
       socket.off('participant_status', handleStatus);
     };
-  }, [conversationId, myId]); // ✅ myId dependency add
+  }, [conversationId]);
 
   const sendMessage = () => {
     if (!input.trim()) return;
     const socket = getSocket();
     if (!socket) return;
+
+    if (!socket.connected) {
+      if (token) initSocket(token);
+      socket.once('connect', () => {
+        socket.emit('send_message', {
+          conversationId,
+          message: input.trim(),
+        });
+      });
+      setInput('');
+      return;
+    }
 
     socket.emit('send_message', {
       conversationId,
@@ -147,113 +215,214 @@ export default function ChatScreen() {
     const socket = getSocket();
     socket?.emit('display_typing', { conversationId, isTyping: true });
 
-    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current); // ✅ clear old timeout
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
       socket?.emit('display_typing', { conversationId, isTyping: false });
     }, 800);
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top, marginTop: 18 }}>
-      {/* Header */}
-      <View className="bg-[#652D8B] px-4 py-3 flex-row items-center gap-3">
-        <TouchableOpacity onPress={() => router.back()}>
-          <ArrowLeft size={24} color="white" />
-        </TouchableOpacity>
-        <View>
-          <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-white text-base">
-            {name || 'Unknown User'}
-          </Text>
-        </View>
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#652D8B' }} edges={['top']}>
+      <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <FlatList
-          ref={flatListRef}
-          data={allMessages}
-          style={{ flex: 1 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16, gap: 8 }}
-          ListHeaderComponent={
-            <Text
-              style={{ fontFamily: 'Inter_400Regular' }}
-              className="text-xs text-gray-400 text-center mb-2"
-            >
-              Today
+        {/* Header */}
+        <View
+          style={{
+            backgroundColor: '#652D8B',
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color="white" />
+          </TouchableOpacity>
+          <View>
+            <Text style={{ fontFamily: 'Inter_600SemiBold', color: 'white', fontSize: 16 }}>
+              {name || 'Unknown User'}
             </Text>
-          }
-          renderItem={({ item }) => (
-            <View className={`flex-row ${item.isMine ? 'justify-end' : 'justify-start'}`}>
-              <View
-                style={{ maxWidth: '75%' }}
-                className={`px-4 py-3 rounded-2xl ${item.isMine
-                    ? 'bg-[#652D8B] rounded-tr-sm'
-                    : 'bg-white border border-gray-100 rounded-tl-sm'
-                  }`}
+            <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 11, color: '#e9d5ff' }}>
+              {onlineStatus === 'online' ? '🟢 Online' : '⚪ Offline'}
+            </Text>
+          </View>
+        </View>
+
+        {/* ✅ KeyboardAvoidingView platform অনুযায়ী */}
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        >
+          {/* Message List */}
+          <FlatList
+            ref={flatListRef}
+            data={allMessages}
+            style={{ flex: 1 }}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"        // ✅ drag করলে keyboard নামবে
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            onContentSizeChange={() =>
+              flatListRef.current?.scrollToEnd({ animated: true })
+            }
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+              gap: 8,
+              flexGrow: 1,                        // ✅ messages কম হলেও bottom এ থাকবে
+            }}
+            ListHeaderComponent={
+              <Text
+                style={{
+                  fontFamily: 'Inter_400Regular',
+                  fontSize: 12,
+                  color: '#9CA3AF',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                }}
               >
-                {item.image && (
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: 200, height: 200 }}
-                    resizeMode="cover"
-                  />
-                )}
-                {item.text ? (
-                  <Text
-                    style={{ fontFamily: 'Inter_400Regular' }}
-                    className={`text-sm ${item.isMine ? 'text-white' : 'text-[#0F0B18]'}`}
-                  >
-                    {item.text}
-                  </Text>
-                ) : null}
-                <Text
-                  style={{ fontFamily: 'Inter_400Regular' }}
-                  className={`text-xs mt-1 ${item.isMine ? 'text-purple-200' : 'text-gray-400'}`}
+                Today
+              </Text>
+            }
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: item.isMine ? 'flex-end' : 'flex-start',
+                }}
+              >
+                <View
+                  style={{
+                    maxWidth: '75%',
+                    paddingHorizontal: 16,
+                    paddingVertical: 10,
+                    borderRadius: 18,
+                    ...(item.isMine
+                      ? {
+                          backgroundColor: '#652D8B',
+                          borderTopRightRadius: 4,
+                        }
+                      : {
+                          backgroundColor: 'white',
+                          borderTopLeftRadius: 4,
+                          borderWidth: 1,
+                          borderColor: '#F3F4F6',
+                        }),
+                  }}
                 >
-                  {item.time}
-                </Text>
+                  {item.image && (
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: 200, height: 200, borderRadius: 8, marginBottom: 4 }}
+                      resizeMode="cover"
+                    />
+                  )}
+                  {item.text ? (
+                    <Text
+                      style={{
+                        fontFamily: 'Inter_400Regular',
+                        fontSize: 14,
+                        color: item.isMine ? 'white' : '#0F0B18',
+                      }}
+                    >
+                      {item.text}
+                    </Text>
+                  ) : null}
+                  <Text
+                    style={{
+                      fontFamily: 'Inter_400Regular',
+                      fontSize: 11,
+                      marginTop: 4,
+                      color: item.isMine ? '#e9d5ff' : '#9CA3AF',
+                      textAlign: 'right',
+                    }}
+                  >
+                    {item.time}
+                  </Text>
+                </View>
               </View>
+            )}
+          />
+
+          {/* Typing indicator */}
+          {isTyping && (
+            <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
+              <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 12, color: '#9CA3AF' }}>
+                typing...
+              </Text>
             </View>
           )}
-        />
 
-        {/* Input */}
-        <View
-          style={{ paddingBottom: insets.bottom || 12 }}
-          className="px-4 pt-3 flex-row items-center gap-3 border-t border-gray-100 bg-white"
-        >
-          <TouchableOpacity className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center">
-            <ImageIcon size={20} color="#9CA3AF" />
-          </TouchableOpacity>
-
-          <View className="flex-1 bg-gray-100 rounded-full px-4 py-1">
-            <TextInput
-              placeholder="Type a message..."
-              placeholderTextColor="#9CA3AF"
-              value={input}
-              onChangeText={handleTypingChange}
-              multiline
-              style={{
-                fontFamily: 'Inter_400Regular',
-                fontSize: 14,
-                color: '#0F0B18',
-                minHeight: 40,
-                maxHeight: 100,
-              }}
-            />
-          </View>
-
-          <TouchableOpacity
-            onPress={sendMessage}
-            className="w-10 h-10 rounded-full bg-[#652D8B] items-center justify-center"
+          {/* ✅ Input bar — insets.bottom দিয়ে safe area handle */}
+          <View
+            style={{
+              paddingBottom: insets.bottom > 0 ? insets.bottom : 12,
+              paddingTop: 10,
+              paddingHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              borderTopWidth: 1,
+              borderTopColor: '#F3F4F6',
+              backgroundColor: 'white',
+            }}
           >
-            <Send size={18} color="white" />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+            <TouchableOpacity
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: '#F3F4F6',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ImageIcon size={20} color="#9CA3AF" />
+            </TouchableOpacity>
+
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: '#F3F4F6',
+                borderRadius: 24,
+                paddingHorizontal: 16,
+                paddingVertical: 2,
+              }}
+            >
+              <TextInput
+                placeholder="Type a message..."
+                placeholderTextColor="#9CA3AF"
+                value={input}
+                onChangeText={handleTypingChange}
+                multiline
+                style={{
+                  fontFamily: 'Inter_400Regular',
+                  fontSize: 14,
+                  color: '#0F0B18',
+                  minHeight: 40,
+                  maxHeight: 100,
+                }}
+              />
+            </View>
+
+            <TouchableOpacity
+              onPress={sendMessage}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: '#652D8B',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Send size={18} color="white" />
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
   );
 }
