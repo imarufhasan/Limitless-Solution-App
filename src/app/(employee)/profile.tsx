@@ -46,7 +46,7 @@ export default function Profile() {
     await persistor.purge();
     dispatch(logout());
     disconnectSocket();
-    router.replace("/onboarding" as any);
+    router.replace("/(auth)/login" as any);
   }
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>

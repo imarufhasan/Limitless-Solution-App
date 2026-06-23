@@ -1,8 +1,9 @@
+import EmptyData from '@/components/EmptyData';
 import { SkeletonCard } from '@/components/shared/SkeletonBox';
 import { useGetAssignmentsQuery } from '@/redux/features/employee/assignmentApi';
-import { router } from 'expo-router';
-import { Calendar, MapPin, MessageCircle, Package, Phone, Truck } from 'lucide-react-native';
-import React, { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Calendar, MapPin, MessageCircle, Phone, Truck } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,9 +16,17 @@ const statusConfig: Record<string, { bg: string; text: string; label: string }> 
 };
 
 export default function EmployeeTrack() {
-  const [activeTab, setActiveTab] = useState("pending");
+  const { tab } = useLocalSearchParams<{ tab: string }>();
+  const [activeTab, setActiveTab] = useState(tabs.includes(tab) ? tab : "pending");
 
-  const { data, isLoading , isFetching } = useGetAssignmentsQuery({
+
+  useEffect(() => {
+    if (tab && tabs.includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
+
+  const { data, isLoading, isFetching } = useGetAssignmentsQuery({
     page: 1,
     limit: 10,
     sortOrder: 'desc',
@@ -28,13 +37,14 @@ export default function EmployeeTrack() {
 
   const assignments = data?.data || [];
 
+  // console.log("ass", assignments)
+
 
 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
       <View style={{ flex: 1, paddingHorizontal: 16 }}>
-        {/* <StatusBar style="dark" /> */}
 
         {/* Header */}
         <Text style={{ fontFamily: "Inter_700Bold", fontSize: 28, color: '#0F0B18', marginTop: 8, marginBottom: 16 }}>
@@ -72,9 +82,7 @@ export default function EmployeeTrack() {
         </View>
 
         {/* Loading */}
-        {isLoading  || isFetching ? (
-          // <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 40 }} />
-
+        {isLoading || isFetching ? (
           <>
             <SkeletonCard />
             <SkeletonCard />
@@ -88,24 +96,7 @@ export default function EmployeeTrack() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20 }}
             ListEmptyComponent={
-              <View style={{ alignItems: 'center', marginTop: 80, gap: 12 }}>
-                <View style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 36,
-                  backgroundColor: '#F3E8FF',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <Package size={32} color="#652D8B" />
-                </View>
-                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 15, color: '#0F0B18' }}>
-                  No {statusConfig[activeTab].label} tasks
-                </Text>
-                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: '#9CA3AF', textAlign: 'center' }}>
-                  You have no {statusConfig[activeTab].label.toLowerCase()} assignments right now
-                </Text>
-              </View>
+              <EmptyData label={statusConfig[activeTab].label} margin={80} />
             }
             renderItem={({ item }) => {
               const config = statusConfig[item.status] || statusConfig['pending'];
@@ -116,7 +107,7 @@ export default function EmployeeTrack() {
                     if (item.status === "pending") {
                       router.push({
                         pathname: "/(trackPickup)/pendingPickup",
-                        params: { userId: item?.assignmentId },
+                        params: { id: item?.assignmentId },
                       } as any);
                     }
                   }}
@@ -194,11 +185,32 @@ export default function EmployeeTrack() {
                     <Text style={{ fontFamily: "Inter_700Bold", fontSize: 16, color: '#652D8B' }}>
                       ${item.totalPrice}
                     </Text>
+
                   </View>
 
+
+                  {/* View Details Button */}
+                  {
+                    item.status === "pending" && <TouchableOpacity
+                    onPress={()=>router.push({
+                      pathname: "/(trackPickup)/pendingPickup",
+                      params: { id: item?.assignmentId },
+                    } as any)}
+                      style={{
+                        flex: 1, paddingVertical: 12, borderRadius: 50, marginTop: 10,
+                        alignItems: 'center', borderWidth: 1, borderColor: '#652D8B',
+                        flexDirection: 'row', justifyContent: 'center', gap: 6,
+                      }}>
+                      <Truck size={16} color="#652D8B" />
+                      <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#652D8B' }}>
+                        View Details
+                      </Text>
+                    </TouchableOpacity>
+                  }
+
+
+
                   {/* Accepted Buttons */}
-
-
                   {item.status === "accepted" && (
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       <TouchableOpacity

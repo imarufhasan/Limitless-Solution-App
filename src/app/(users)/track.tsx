@@ -44,6 +44,8 @@ export default function Track() {
   }
 
 
+  // console.log("orders",orders[0])
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
@@ -235,7 +237,7 @@ export default function Track() {
                   )}
 
                   {(item.status === "accepted" ||
-                    item?.status === "on_the_way" || item?.status === "qouted" || item?.status === "completed" || item?.status === "assigned" || item?.status === "received"
+                    item?.status === "on_the_way" || item?.status !== "qouted" || item?.status === "completed" || item?.status === "assigned" || item?.status === "received"
                   ) && item?.deliveryType === "pickup" && (
                       <View style={{ flexDirection: 'row', gap: 12 }}>
                         <TouchableOpacity
@@ -251,10 +253,9 @@ export default function Track() {
                             Track
                           </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                          disabled={!item?.conversationId}
+                        {
+                          item?.conversationId  && <TouchableOpacity
                           onPress={() => {
-                            if (!item?.conversationId) return;
                             router.push({
                               pathname: '/chat/[userId]',
                               params: { userId: item.conversationId, name : item?.employeeName}
@@ -268,6 +269,8 @@ export default function Track() {
                             Chat
                           </Text>
                         </TouchableOpacity>
+                        }
+                        
                       </View>
                     )}
                 </View>

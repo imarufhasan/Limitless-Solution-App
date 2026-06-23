@@ -31,7 +31,18 @@ const assignmentApi = baseApi.injectEndpoints({
           url : `/assignment/accept/${id}`,
           method : "POST"
         }
-      }
+      },
+      invalidatesTags :["assignment"]
+    }),
+    canelAssignment : builder.mutation({
+      query : ({id , data}) =>{
+        return {
+          url : `/assignment/cancel/${id}`,
+          method : 'POST',
+          body : data
+        }
+      },
+      invalidatesTags : ['assignment']
     }),
     onTheWayStatus :  builder.mutation({
       query : ({id})=>{
@@ -61,5 +72,5 @@ const assignmentApi = baseApi.injectEndpoints({
 });
 
 export const { useGetAssignmentsQuery , useGetAssignmentDetailsQuery , useAcceptAssignmentMutation,
-  useReceivedOrderStautsMutation, useCompleteOrderStatusMutation, useOnTheWayStatusMutation
+  useReceivedOrderStautsMutation, useCompleteOrderStatusMutation, useOnTheWayStatusMutation , useCanelAssignmentMutation
 } = assignmentApi;

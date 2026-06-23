@@ -48,7 +48,7 @@ export default function ProfileSetting() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top','bottom']}>
       <View style={{ flex: 1, paddingHorizontal: 16 }}>
         <BackButton title="Profile Setting" />
 

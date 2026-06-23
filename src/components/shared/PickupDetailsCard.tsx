@@ -24,7 +24,6 @@ export default function PickupDetailsCard({
     onDecline,
     assignment,
     isLoading }: Props) {
-    // console.log("assignment screen", assignment?.vinNumber)
     const { width } = Dimensions.get("window");
     const customerInfo = [
         { label: "Name", value: assignment?.customerName },
@@ -85,9 +84,7 @@ export default function PickupDetailsCard({
                                 Customer Information
                             </Text>
                         </View>
-                        {/* <TouchableOpacity onPress={()=> router.push("/chat/[userId]")} className="w-9 h-9 rounded-full  border border-[#652D8B] items-center justify-center">
-                            <MessageSquareMore size={20} color="#652D8B" />
-                        </TouchableOpacity> */}
+
                     </View>
 
                     {customerInfo?.map((field) => (
@@ -234,6 +231,7 @@ export default function PickupDetailsCard({
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={onPress}
+                                disabled={isLoading}
                                 style={{
                                     flex: 1,
                                     paddingVertical: 12,
@@ -242,9 +240,13 @@ export default function PickupDetailsCard({
                                     backgroundColor: '#652D8B',
                                 }}
                             >
-                                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
-                                    Accept
-                                </Text>
+                                {isLoading ? (
+                                    <ActivityIndicator size="small" color="white" />
+                                ) : (
+                                    <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
+                                        Accept
+                                    </Text>
+                                )}
                             </TouchableOpacity>
                         </View>
                     ) : (

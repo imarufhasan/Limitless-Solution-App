@@ -21,11 +21,11 @@ export default function TermsCondition() {
     );
   }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top', 'bottom']}>
       <View className="flex-1 px-4">
         <ScrollView showsVerticalScrollIndicator={false}>
           <BackButton title='Terms & Conditions' textColor='#652D8B' showBorder />
-          <View className="bg-[#F0EAF3] rounded-md shadow-xl p-4 mt-4 flex-1 mb-10">
+          <View className="bg-[#F0EAF3] rounded-md shadow-xl p-4 mt-4 flex-1 mb-2">
             <RenderHTML
               contentWidth={width}
               source={{

@@ -1,3 +1,5 @@
+import EmptyData from '@/components/EmptyData';
+import { SkeletonCard } from '@/components/shared/SkeletonBox';
 import { useGetProfileQuery } from '@/redux/features/auth/authApi';
 import { useGetTaskInfoQuery } from '@/redux/features/home/homeApi';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,7 +27,7 @@ function TaskCard({ item }: { item: any }) {
       backgroundColor: 'white',
       borderRadius: 16,
       padding: 16,
-      marginBottom: 12,
+      // marginBottom: 12,
       borderWidth: 1,
       borderColor: '#F3F4F6',
     }}>
@@ -85,7 +87,8 @@ function TaskCard({ item }: { item: any }) {
       </View>
 
       {/* Buttons */}
-      <View style={{ flexDirection: 'row', gap: 12 }}>
+      {
+        item?.status !== "Pending" && <View style={{ flexDirection: 'row', gap: 12 }}>
         <TouchableOpacity onPress={() => router.push({
           pathname: "/(trackPickup)/pickupDetails",
           params: { id: item?.id }
@@ -132,6 +135,8 @@ function TaskCard({ item }: { item: any }) {
           </Text>
         </TouchableOpacity>
       </View>
+      }
+      
     </View>
   );
 }
@@ -139,7 +144,7 @@ function TaskCard({ item }: { item: any }) {
 export default function EmployeeHome() {
   const { data, isLoading } = useGetProfileQuery({});
   const insets = useSafeAreaInsets()
-  const { data: getTaskInfo, isLoading: taskLoading, refetch } = useGetTaskInfoQuery({})
+  const { data: getTaskInfo, isLoading: taskLoading, refetch , isFetching} = useGetTaskInfoQuery({})
 
   const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
   const nextAssignment = getTaskInfo?.data?.pendingAssignment;
@@ -151,7 +156,6 @@ export default function EmployeeHome() {
        
       refetch()
         .then((res) => {
-          // console.log("Fresh MyCloset Response: ", res?.data);
         })
         .catch((err) => {
           console.log("MyCloset Error:", err);
@@ -260,20 +264,20 @@ export default function EmployeeHome() {
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginBottom: 12 }}>
             Current Task
           </Text>
-          {currentTask ? (
+          {taskLoading  ? <SkeletonCard/> : currentTask ? (
             <TaskCard item={currentTask} />
           ) : (
-            <Text>No current assignment available</Text>
+            <EmptyData label='New Task' margin={0} />
           )}
 
           {/* Next Task */}
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginBottom: 12, marginTop: 8 }}>
             Next Task
           </Text>
-          {nextTask ? (
+          {taskLoading  ? <SkeletonCard/> : nextTask ? (
             <TaskCard item={nextTask} />
           ) : (
-            <Text>No pending assignment available</Text>
+            <EmptyData label='New Task' margin={0} />
           )}
         </View>
       </ScrollView>

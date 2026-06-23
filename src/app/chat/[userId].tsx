@@ -12,7 +12,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -221,6 +221,8 @@ export default function ChatScreen() {
     }, 800);
   };
 
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#652D8B' }} edges={['top']}>
       <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
@@ -252,7 +254,7 @@ export default function ChatScreen() {
         {/* ✅ KeyboardAvoidingView platform অনুযায়ী */}
         <KeyboardAvoidingView
           style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior="padding"
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
           {/* Message List */}
@@ -261,12 +263,11 @@ export default function ChatScreen() {
             data={allMessages}
             style={{ flex: 1 }}
             keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"        // ✅ drag করলে keyboard নামবে
+            keyboardDismissMode="interactive"       // ✅ drag করলে keyboard নামবে
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item.id}
-            onContentSizeChange={() =>
-              flatListRef.current?.scrollToEnd({ animated: true })
-            }
+            onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
+            onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             contentContainerStyle={{
               paddingHorizontal: 16,
               paddingVertical: 16,
@@ -301,15 +302,15 @@ export default function ChatScreen() {
                     borderRadius: 18,
                     ...(item.isMine
                       ? {
-                          backgroundColor: '#652D8B',
-                          borderTopRightRadius: 4,
-                        }
+                        backgroundColor: '#652D8B',
+                        borderTopRightRadius: 4,
+                      }
                       : {
-                          backgroundColor: 'white',
-                          borderTopLeftRadius: 4,
-                          borderWidth: 1,
-                          borderColor: '#F3F4F6',
-                        }),
+                        backgroundColor: 'white',
+                        borderTopLeftRadius: 4,
+                        borderWidth: 1,
+                        borderColor: '#F3F4F6',
+                      }),
                   }}
                 >
                   {item.image && (
@@ -358,7 +359,7 @@ export default function ChatScreen() {
           {/* ✅ Input bar — insets.bottom দিয়ে safe area handle */}
           <View
             style={{
-              paddingBottom: insets.bottom > 0 ? insets.bottom : 12,
+              paddingBottom: insets.bottom + 10,
               paddingTop: 10,
               paddingHorizontal: 16,
               flexDirection: 'row',
