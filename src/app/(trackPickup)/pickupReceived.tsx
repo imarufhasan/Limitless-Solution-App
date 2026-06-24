@@ -12,9 +12,7 @@ export default function PickupReceived() {
 
   const assignment = data?.data
 
-  console.log(" receivedss ", assignment)
   const handleChangeStatus = async(id: string) => {
-    console.log("received Id", id)
     try {
       const res = await receivedAssignment({ id }).unwrap()
       router.push({

@@ -27,7 +27,6 @@ const orderApi = baseApi.injectEndpoints({
         }),
         acceptQuote: builder.mutation({
             query: (id) => {
-                console.log("URL:", `/order/accept/${id}`);
                 return {
                     url: `/order/accept/${id}`,
                     method: 'POST',

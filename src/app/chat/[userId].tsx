@@ -85,7 +85,7 @@ export default function ChatScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      refetch().catch((err) => console.log('Refetch Error:', err));
+      refetch()
       profileRefetch();
     }, [])
   );

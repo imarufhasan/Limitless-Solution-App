@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Modal,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 type Props = {
@@ -46,20 +46,20 @@ export default function CancelModal({ visible, onClose, onConfirm, isLoading }: 
           <View style={{
             backgroundColor: 'white',
             borderRadius: 20,
-            padding: 24,
+            padding: 15,
           }}>
             {/* Header */}
-            <View style={{ marginBottom: 16 }}>
+            {/* <View style={{ marginBottom: 16 }}>
               <Text style={{ fontFamily: 'Inter_700Bold', fontSize: 18, color: '#0F0B18' }}>
                 Decline Assignment
               </Text>
               <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 13, color: '#9CA3AF', marginTop: 4 }}>
                 Please provide a reason for declining
               </Text>
-            </View>
+            </View> */}
 
             {/* Divider */}
-            <View style={{ height: 1, backgroundColor: '#F3F4F6', marginBottom: 16 }} />
+            {/* <View style={{ height: 1, backgroundColor: '#F3F4F6', marginBottom: 16 }} /> */}
 
             {/* Reason Input */}
             <Text style={{ fontFamily: 'Inter_500Medium', fontSize: 13, color: '#374151', marginBottom: 8 }}>
@@ -81,13 +81,13 @@ export default function CancelModal({ visible, onClose, onConfirm, isLoading }: 
                 borderColor: reason.length > 0 ? '#652D8B' : '#E5E7EB',
                 borderRadius: 12,
                 padding: 12,
-                minHeight: 100,
+                minHeight: 75,
                 backgroundColor: '#FAFAFA',
               }}
             />
-            <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 11, color: '#9CA3AF', marginTop: 6, textAlign: 'right' }}>
+            {/* <Text style={{ fontFamily: 'Inter_400Regular', fontSize: 11, color: '#9CA3AF', marginTop: 6, textAlign: 'right' }}>
               {reason.length} characters
-            </Text>
+            </Text> */}
 
             {/* Buttons */}
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>

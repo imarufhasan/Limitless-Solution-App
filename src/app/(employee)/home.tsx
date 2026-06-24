@@ -151,15 +151,10 @@ export default function EmployeeHome() {
 
   useFocusEffect(
     useCallback(() => {
-      // console.log("MyCloset Screen Focused");
       setStatusBarStyle('light');
        
       refetch()
-        .then((res) => {
-        })
-        .catch((err) => {
-          console.log("MyCloset Error:", err);
-        });
+       
         return () => {
         setStatusBarStyle('dark');
       };
@@ -267,17 +262,17 @@ export default function EmployeeHome() {
           {taskLoading  ? <SkeletonCard/> : currentTask ? (
             <TaskCard item={currentTask} />
           ) : (
-            <EmptyData label='New Task' margin={0} />
+            <EmptyData label='Current' margin={0} />
           )}
 
           {/* Next Task */}
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginBottom: 12, marginTop: 8 }}>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginTop: 8 }}>
             Next Task
           </Text>
           {taskLoading  ? <SkeletonCard/> : nextTask ? (
             <TaskCard item={nextTask} />
           ) : (
-            <EmptyData label='New Task' margin={0} />
+            <EmptyData label='Next' margin={0} />
           )}
         </View>
       </ScrollView>

@@ -12,6 +12,7 @@ type SelectedMetal = {
   price: number;
   unit: string;
   quantity: number;
+  quantityInput: string;
 };
 
 export default function Calculator() {
@@ -31,6 +32,7 @@ export default function Calculator() {
         price: metal.price,
         unit: metal.unit,
         quantity: 1,
+        quantityInput: '1',
       }]);
     }
     setShowDropdown(false);
@@ -40,13 +42,18 @@ export default function Calculator() {
     setSelectedMetals(selectedMetals.filter((m) => m._id !== id));
   };
 
-  const updateQuantity = (id: string, qty: string) => {
-    const quantity = parseInt(qty) || 1;
-    setSelectedMetals(selectedMetals.map((m) => m._id === id ? { ...m, quantity } : m));
+  const updateQuantity = (id: string, val: string) => {
+    const cleaned = val.replace(/[^0-9]/g, '');
+    const quantity = parseInt(cleaned) || 0;
+    setSelectedMetals(selectedMetals.map((m) =>
+      m._id === id
+        ? { ...m, quantityInput: cleaned, quantity }
+        : m
+    ))
   };
 
   const getSubtotal = (metal: SelectedMetal) => {
-    return (metal.price * metal.quantity).toFixed(2);
+    return (metal.price * (metal.quantity || 0)).toFixed(2);
   };
 
   const getTotal = () => {
@@ -133,7 +140,7 @@ export default function Calculator() {
                     Quantity ({metal.unit})
                   </Text>
                   <TextInput
-                    value={metal.quantity.toString()}
+                    value={metal.quantityInput}
                     onChangeText={(val) => updateQuantity(metal._id, val)}
                     keyboardType="numeric"
                     style={{

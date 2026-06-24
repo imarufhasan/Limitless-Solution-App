@@ -29,9 +29,7 @@ export default function Support() {
   const { data: profileData } = useGetProfileQuery({});
   const myId = profileData?.data?._id;
 
-  // console.log("employeeId" , myId)
-
-  // console.log("Support",conversationId)
+ 
 
   const { data: messagesData, refetch } = useGetConversationMessagesQuery(
     conversationId,
@@ -41,7 +39,7 @@ export default function Support() {
   useFocusEffect(
   useCallback(() => {
     if (conversationId) {  
-      refetch().catch((err) => console.log("Refetch Error:", err));
+      refetch()
     }
   }, [conversationId])  
 );

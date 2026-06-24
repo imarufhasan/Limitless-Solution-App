@@ -16,7 +16,6 @@ export default function Profile() {
   const [createSupportConversation, { isLoading }] = useCreateSupportConversationMutation({})
 
   const handleSupport = async () => {
-    // console.log("cliuck")
     try {
       const res = await createSupportConversation({}).unwrap();
       router.push({
@@ -26,7 +25,6 @@ export default function Profile() {
         },
       });
     } catch (error) {
-      console.log("Support Error:", error);
     }
   };
 

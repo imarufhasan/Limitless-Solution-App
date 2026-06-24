@@ -44,7 +44,6 @@ export default function Track() {
   }
 
 
-  // console.log("orders",orders[0])
 
 
   return (
@@ -103,7 +102,6 @@ export default function Track() {
               </View>
             }
             renderItem={({ item }) => {
-              // console.log("item status:", item.status);
               const config = statusConfig[item.status] ?? statusConfig['pending'];
               return (
                 <View style={{

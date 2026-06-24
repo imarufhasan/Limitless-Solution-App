@@ -14,15 +14,9 @@ export default function PickupDetails() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("MyCloset Screen Focused");
 
       refetch()
-        .then((res) => {
-          // console.log("Fresh MyCloset Response: ", res?.data);
-        })
-        .catch((err) => {
-          // console.log("MyCloset Error:", err);
-        });
+       
     }, []),
   );
 

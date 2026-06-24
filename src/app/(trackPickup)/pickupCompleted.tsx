@@ -13,9 +13,7 @@ export default function PickupCompleted() {
   const assignment = data?.data
 
 
-  // console.log(" receivedss ", assignment)
   const handleChangeStatus = async (id: string) => {
-    // console.log("received Id", id)
     try {
       const res = await receivedAssignment({ id }).unwrap()
       router.push({
@@ -27,14 +25,12 @@ export default function PickupCompleted() {
     } catch (error: any) {
       toast.error(error?.data?.message)
     }
-    // router.push("/(trackPickup)/pickupCompleted" as any)
   }
   return (
     <PickupDetailsCard
       buttonLabel="Mark as Completed"
       isLoading={isLoading}
       buttonIcon={CheckCircle}
-      // onPress={() => router.push("/(employee)/home" as any)}
       onPress={() => handleChangeStatus(assignment?.orderId)}
       assignment={assignment}
     />

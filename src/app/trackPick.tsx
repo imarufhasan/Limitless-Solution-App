@@ -1,6 +1,6 @@
 import { useGetOrderHistoryQuery } from '@/redux/features/orderApi';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, CheckCircle, MapPin, MessageSquareMore, PhoneCall } from 'lucide-react-native';
+import { ArrowLeft, CheckCircle, MapPin, PhoneCall } from 'lucide-react-native';
 import { Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -47,11 +47,11 @@ export default function TrackPickup() {
 
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top']}>
+        <SafeAreaView className="flex-1 bg-[#F8F6FA]" edges={['top', 'bottom']}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30 }}>
 
 
-                <View className="flex-row items-center gap-3 mb-8 px-4">
+                <View className="flex-row items-center gap-3 pt-2 mb-8 px-4">
                     <TouchableOpacity
                         onPress={() => router.back()}
                         className="w-10 h-10 rounded-xl items-center justify-center"
@@ -63,13 +63,11 @@ export default function TrackPickup() {
                         <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl">
                             Track Pickup
                         </Text>
-                        {/* <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-[#4F4F59]">
-                            Request #1235
-                        </Text> */}
+                        
                     </View>
                 </View>
                 {/* Header */}
-                <View className="bg-[#652D8B] mx-4 pt-4 py-8 rounded-3xl">
+                <View className="bg-[#652D8B] mx-4 pt-2 py-8  rounded-3xl">
 
 
                     {/* MapPin */}
@@ -108,9 +106,7 @@ export default function TrackPickup() {
                             </View>
                         </View>
                         <View className="flex-row gap-2">
-                            <TouchableOpacity onPress={() => router.push('/chat/[userId]')} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
-                                <MessageSquareMore size={18} color="#652D8B" />
-                            </TouchableOpacity>
+                           
                             <TouchableOpacity onPress={() => Linking.openURL(`tel:${pickUpData?.employeePhoneNumber}`)} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
                                 <PhoneCall size={18} color="#652D8B" />
                             </TouchableOpacity>

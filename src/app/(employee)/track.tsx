@@ -37,7 +37,6 @@ export default function EmployeeTrack() {
 
   const assignments = data?.data || [];
 
-  // console.log("ass", assignments)
 
 
 

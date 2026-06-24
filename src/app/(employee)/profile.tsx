@@ -26,10 +26,8 @@ export default function Profile() {
   ];
 
     const handleSupport = async () => {
-      // console.log("cliuck")
       try {
         const res = await createSupportConversation({}).unwrap();
-        // console.log(res)
         router.push({
           pathname: "/(settings)/support",
           params: {
@@ -37,7 +35,6 @@ export default function Profile() {
           },
         });
       } catch (error) {
-        console.log("Support Error:", error);
       }
     };
   

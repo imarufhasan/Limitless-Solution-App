@@ -1,5 +1,6 @@
 
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
   visible: boolean;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function CalculatorResultModal({ visible, onClose, total, partsCount, selectedMetals, onRequestPickup }: Props) {
+    const insets = useSafeAreaInsets();
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <TouchableOpacity
@@ -18,7 +20,7 @@ export default function CalculatorResultModal({ visible, onClose, total, partsCo
         onPress={onClose}
         activeOpacity={1}
       >
-        <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
+        <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 ,paddingBottom: insets.bottom + 24, }}>
           {/* Icon */}
           <View style={{ alignItems: 'center', marginBottom: 16 }}>
             <View style={{
