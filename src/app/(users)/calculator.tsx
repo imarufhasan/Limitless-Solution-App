@@ -203,6 +203,7 @@ export default function Calculator() {
       >
         <TouchableOpacity
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
+          activeOpacity={1}
           onPress={() => setShowDropdown(false)}
         >
           <View style={{
@@ -213,24 +214,30 @@ export default function Calculator() {
             overflow: 'hidden',
             borderWidth: 1,
             borderColor: '#E5E7EB',
+            maxHeight: 400, // 👈 fixed height so it doesn't grow forever
           }}>
-            {metals.map((metal: any, i: number) => (
-              <TouchableOpacity
-                key={metal._id}
-                onPress={() => addMetal(metal)}
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 14,
-                  borderBottomWidth: i < metals.length - 1 ? 1 : 0,
-                  borderBottomColor: '#F3F4F6',
-                  backgroundColor: selectedMetals.find(m => m._id === metal._id) ? '#F3E8FF' : 'white',
-                }}
-              >
-                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#0F0B18' }}>
-                  {metal.name} — ${metal.price}/{metal.unit}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              {metals.map((metal: any, i: number) => (
+                <TouchableOpacity
+                  key={metal._id}
+                  onPress={() => addMetal(metal)}
+                  style={{
+                    paddingHorizontal: 16,
+                    paddingVertical: 14,
+                    borderBottomWidth: i < metals.length - 1 ? 1 : 0,
+                    borderBottomColor: '#F3F4F6',
+                    backgroundColor: selectedMetals.find(m => m._id === metal._id) ? '#F3E8FF' : 'white',
+                  }}
+                >
+                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: '#0F0B18' }}>
+                    {metal.name} — ${metal.price}/{metal.unit}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </TouchableOpacity>
       </Modal>
