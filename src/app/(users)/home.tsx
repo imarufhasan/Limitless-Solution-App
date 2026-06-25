@@ -1,10 +1,11 @@
 import MetalPriceCard from '@/components/shared/MetalPriceCard'
+import MetalPriceSkeleton from '@/components/shared/MetalPriceSkeleton'
 import Carousel from '@/components/ui/Carousel'
 import { useGetMetalsQuery } from '@/redux/features/metalApi'
 import { router } from 'expo-router'
 import { ArrowRight, BellIcon, Calculator, Car, Zap } from 'lucide-react-native'
 import React from 'react'
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
@@ -128,7 +129,7 @@ const Home = () => {
 
         {/* Metal Price Cards */}
         {isLoading ? (
-          <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 20 }} />
+          <MetalPriceSkeleton/>
         ) : (
           <MetalPriceCard metals={metals} />
         )}

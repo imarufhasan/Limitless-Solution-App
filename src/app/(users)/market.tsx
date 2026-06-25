@@ -1,8 +1,9 @@
 import MetalPriceCard from '@/components/shared/MetalPriceCard';
+import MetalPriceSkeleton from '@/components/shared/MetalPriceSkeleton';
 import { useGetMetalsQuery } from '@/redux/features/metalApi';
 import { Search } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Market() {
@@ -15,6 +16,7 @@ export default function Market() {
   });
 
   const metals = data?.data || [];
+
 
   return (
     <SafeAreaView className='flex-1 px-4 bg-[#F8F6FA]' edges={['top']}>
@@ -42,7 +44,7 @@ export default function Market() {
         </View>
 
         {isLoading ? (
-          <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 40 }} />
+          <MetalPriceSkeleton/>
         ) : metals.length === 0 ? (
           <Text style={{ fontFamily: "Inter_400Regular" }} className="text-center text-gray-400 mt-10">
             No metals found

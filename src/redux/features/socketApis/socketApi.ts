@@ -25,11 +25,23 @@ const socketApi = baseApi.injectEndpoints({
                 }
             },
             providesTags: ['Conversation'],
-        })
+        }),
+        uploadAttachment: builder.mutation({
+            query: (formData) => ({
+                url: "/conversation/attachment",
+                method: "POST",
+                body: formData,
+            }),
+        }),
         // conversationAttachedment :  builder.mutation({
         //     query : ()
         // })
     })
 })
 
-export const { useCreateSupportConversationMutation, useGetConversationMessagesQuery, useGetMyConversationQuery } = socketApi
+export const { 
+    useCreateSupportConversationMutation, 
+    useGetConversationMessagesQuery, 
+    useGetMyConversationQuery , 
+    useUploadAttachmentMutation 
+} = socketApi
