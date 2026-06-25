@@ -43,6 +43,7 @@ export default function TrackPickup() {
 
     const pickUpData = data?.data
 
+
     const histories = [...(pickUpData?.histories || [])].reverse();
 
 

@@ -11,16 +11,8 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
-
-
-
-const statusConfig: Record<string, { bg: string; text: string }> = {
-  Ongoing: { bg: "#652D8B", text: "#FFFFFF" },
-  Pending: { bg: "#FEF9C3", text: "#854D0E" },
-};
-
 function TaskCard({ item }: { item: any }) {
-  const config = statusConfig[item.status];
+
 
   return (
     <View className="border  border-[#b6b6ce]" style={{
@@ -43,12 +35,13 @@ function TaskCard({ item }: { item: any }) {
           </Text>
         </View>
         <View style={{
-          backgroundColor: config.bg,
+          borderWidth: 1,
+          borderColor: "#652D8B",
           paddingHorizontal: 10,
           paddingVertical: 4,
           borderRadius: 20,
         }}>
-          <Text style={{ fontFamily: "Inter_500Medium", fontSize: 12, color: config.text }}>
+          <Text style={{ fontFamily: "Inter_500Medium", fontSize: 12, color: "#652D8B" }}>
             {item.status}
           </Text>
         </View>
@@ -89,54 +82,67 @@ function TaskCard({ item }: { item: any }) {
       {/* Buttons */}
       {
         item?.status !== "Pending" && <View style={{ flexDirection: 'row', gap: 12 }}>
-        <TouchableOpacity onPress={() => router.push({
-          pathname: "/(trackPickup)/pickupDetails",
-          params: { id: item?.id }
-
-        } as any)} style={{
-          flex: 1,
-          paddingVertical: 12,
-          borderRadius: 50,
-          alignItems: 'center',
-          borderWidth: 1,
-          borderColor: '#652D8B',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          gap: 6,
-        }}>
-          <Car size={16} color="#652D8B" />
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#652D8B' }}>
-            Track
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity disabled={!item?.conversationId}
-          onPress={() => {
-            if (!item?.conversationId) return;
-            router.push({
-              pathname: '/chat/[userId]',
-              params: {
-                userId: item.conversationId,
-                name: item.name
-              }
-            } as any)
+          <TouchableOpacity onPress={() => {
+            if (item?.orderStatus === 'on_the_way') {
+              router.push({
+                pathname: "/(trackPickup)/pickupReceived",
+                params: { id: item?.id },
+              } as any);
+            } else if (item?.orderStatus === 'received') {
+              router.push({
+                pathname: "/(trackPickup)/pickupCompleted",
+                params: { id: item?.id },
+              } as any);
+            } else {
+              router.push({
+                pathname: "/(trackPickup)/pickupDetails",
+                params: { id: item?.id },
+              } as any)
+            }
           }} style={{
             flex: 1,
             paddingVertical: 12,
             borderRadius: 50,
             alignItems: 'center',
-            backgroundColor: '#652D8B',
+            borderWidth: 1,
+            borderColor: '#652D8B',
             flexDirection: 'row',
             justifyContent: 'center',
             gap: 6,
           }}>
-          <MessageCircle size={16} color="white" />
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
-            Chat
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <Car size={16} color="#652D8B" />
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: '#652D8B' }}>
+              Track
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity disabled={!item?.conversationId}
+            onPress={() => {
+              if (!item?.conversationId) return;
+              router.push({
+                pathname: '/chat/[userId]',
+                params: {
+                  userId: item.conversationId,
+                  name: item.name
+                }
+              } as any)
+            }} style={{
+              flex: 1,
+              paddingVertical: 12,
+              borderRadius: 50,
+              alignItems: 'center',
+              backgroundColor: '#652D8B',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              gap: 6,
+            }}>
+            <MessageCircle size={16} color="white" />
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: 'white' }}>
+              Chat
+            </Text>
+          </TouchableOpacity>
+        </View>
       }
-      
+
     </View>
   );
 }
@@ -144,7 +150,7 @@ function TaskCard({ item }: { item: any }) {
 export default function EmployeeHome() {
   const { data, isLoading } = useGetProfileQuery({});
   const insets = useSafeAreaInsets()
-  const { data: getTaskInfo, isLoading: taskLoading, refetch , isFetching} = useGetTaskInfoQuery({})
+  const { data: getTaskInfo, isLoading: taskLoading, refetch, isFetching } = useGetTaskInfoQuery({})
 
   const currentAssignment = getTaskInfo?.data?.ongoingAssignment;
   const nextAssignment = getTaskInfo?.data?.pendingAssignment;
@@ -152,10 +158,10 @@ export default function EmployeeHome() {
   useFocusEffect(
     useCallback(() => {
       setStatusBarStyle('light');
-       
+
       refetch()
-       
-        return () => {
+
+      return () => {
         setStatusBarStyle('dark');
       };
     }, []),
@@ -174,11 +180,14 @@ export default function EmployeeHome() {
       date: currentAssignment.orderPlacedAt,
       weight: currentAssignment.orderType,
       price: `$${currentAssignment.totalPrice}`,
-      status: "Ongoing",
+      orderStatus: currentAssignment?.orderStatus,
+      status: currentAssignment?.status
+
     }
     : null;
 
 
+  console.log("current Assignment", currentAssignment)
   const nextTask = nextAssignment
     ? {
       id: nextAssignment._id,
@@ -259,7 +268,7 @@ export default function EmployeeHome() {
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginBottom: 12 }}>
             Current Task
           </Text>
-          {taskLoading  ? <SkeletonCard/> : currentTask ? (
+          {taskLoading ? <SkeletonCard /> : currentTask ? (
             <TaskCard item={currentTask} />
           ) : (
             <EmptyData label='Current' margin={0} />
@@ -269,7 +278,7 @@ export default function EmployeeHome() {
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 18, color: '#0F0B18', marginTop: 8 }}>
             Next Task
           </Text>
-          {taskLoading  ? <SkeletonCard/> : nextTask ? (
+          {taskLoading ? <SkeletonCard /> : nextTask ? (
             <TaskCard item={nextTask} />
           ) : (
             <EmptyData label='Next' margin={0} />

@@ -5,12 +5,13 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { Calendar, Car, FileText, Image as ImageIcon, MapPin } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { toast } from 'sonner-native';
 
 export default function SellYourCar() {
+  const debounceTimer = useRef<any>(null);
   const [date, setDate] = useState<Date>(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [vin, setVin] = useState("");
@@ -18,6 +19,8 @@ export default function SellYourCar() {
   const [delivery, setDelivery] = useState("drop_off");
   const [pickupAddress, setPickupAddress] = useState("");
   const [images, setImages] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const [createVehicleOrder, { isLoading }] = useCreateVehicleOrderMutation();
 
@@ -87,6 +90,33 @@ export default function SellYourCar() {
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to submit request");
     }
+  };
+
+  const searchAddress = (text: string) => {
+    setPickupAddress(text);
+
+    // আগের timer cancel করো
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+    if (text.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    // ৬০০ms পর search করো
+    debounceTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(text)}&format=json&limit=5&countrycodes=bd`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const data = await res.json();
+        setSuggestions(data);
+        setShowDropdown(true);
+      } catch (e) {
+        setSuggestions([]);
+      }
+    }, 600);
   };
 
   return (
@@ -239,26 +269,64 @@ export default function SellYourCar() {
                 <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18] mb-2">
                   Pickup Address
                 </Text>
-                <View style={{
-                  backgroundColor: 'white',
-                  borderWidth: 1,
-                  borderColor: '#E5E7EB',
-                  borderRadius: 12,
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 8,
-                }}>
-                  <MapPin size={18} color="#9CA3AF" />
-                  <TextInput
-                    placeholder="Enter your pickup address"
-                    placeholderTextColor="#9CA3AF"
-                    value={pickupAddress}
-                    onChangeText={setPickupAddress}
-                    style={{ fontFamily: "Inter_400Regular", flex: 1 }}
-                    className="text-sm text-[#0F0B18]"
-                  />
+                <View>
+                  <View style={{
+                    backgroundColor: 'white',
+                    borderWidth: 1,
+                    borderColor: '#E5E7EB',
+                    borderRadius: 12,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}>
+                    <MapPin size={18} color="#9CA3AF" />
+                    <TextInput
+                      placeholder="Enter your pickup address"
+                      placeholderTextColor="#9CA3AF"
+                      value={pickupAddress}
+                      onChangeText={searchAddress}
+                      style={{ fontFamily: "Inter_400Regular", flex: 1 }}
+                      className="text-sm text-[#0F0B18]"
+                    />
+                  </View>
+
+                  {/* Dropdown suggestions */}
+                  {showDropdown && suggestions.length > 0 && (
+                    <View style={{
+                      backgroundColor: 'white',
+                      borderWidth: 1,
+                      borderColor: '#E5E7EB',
+                      borderRadius: 12,
+                      marginTop: 4,
+                      overflow: 'hidden',
+                    }}>
+                      {suggestions.map((item, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          onPress={() => {
+                            setPickupAddress(item.display_name);
+                            setSuggestions([]);
+                            setShowDropdown(false);
+                          }}
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'flex-start',
+                            padding: 12,
+                            borderBottomWidth: index < suggestions.length - 1 ? 0.5 : 0,
+                            borderBottomColor: '#F3F4F6',
+                            gap: 10,
+                          }}
+                        >
+                          <MapPin size={16} color="#9CA3AF" style={{ marginTop: 2 }} />
+                          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: '#0F0B18', flex: 1 }}>
+                            {item.display_name}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
                 </View>
               </View>
             )}

@@ -41,6 +41,7 @@ export default function EmployeeTrack() {
 
 
 
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['top']}>
       <View style={{ flex: 1, paddingHorizontal: 16 }}>

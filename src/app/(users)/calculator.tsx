@@ -214,7 +214,7 @@ export default function Calculator() {
             overflow: 'hidden',
             borderWidth: 1,
             borderColor: '#E5E7EB',
-            maxHeight: 400, // 👈 fixed height so it doesn't grow forever
+            maxHeight: 400, 
           }}>
             <ScrollView
               showsVerticalScrollIndicator={false}

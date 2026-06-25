@@ -14,11 +14,11 @@ export default function BannerItem({ image }: BannerItemProps) {
     <View
       style={{
         width: width - 32,
-        height: 150,
+        height: 130,
         marginRight: 12,
         borderRadius: 16,
         overflow: "hidden",
-        backgroundColor: "#E5E7EB", // fallback skeleton color
+        backgroundColor: "#E5E7EB", 
       }}
     >
       {/* LOADING PLACEHOLDER */}
@@ -39,7 +39,7 @@ export default function BannerItem({ image }: BannerItemProps) {
           width: "100%",
           height: "100%",
         }}
-        resizeMode="cover"
+        resizeMode="contain"
         onLoadEnd={() => setImageLoading(false)}
       />
     </View>

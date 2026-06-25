@@ -1,8 +1,9 @@
+import { SkeletonCard } from '@/components/shared/SkeletonBox';
 import { useAcceptQuoteMutation, useCancelQuoteMutation, useGetVehicleOrdersQuery } from '@/redux/features/orderApi';
 import { router } from 'expo-router';
 import { Calendar, Clock, FileText, MapPin, User } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { toast } from 'sonner-native';
 
@@ -19,7 +20,7 @@ export default function Track() {
   const [activeTab, setActiveTab] = useState("pending");
 
 
-  const { data, isLoading } = useGetVehicleOrdersQuery({ page: 1, limit: 20, status: activeTab, }, { refetchOnMountOrArgChange: true, });
+  const { data, isLoading , isFetching} = useGetVehicleOrdersQuery({ page: 1, limit: 20, status: activeTab, }, { refetchOnMountOrArgChange: true, });
 
   const orders = data?.data || [];
 
@@ -86,8 +87,14 @@ export default function Track() {
         </View>
 
         {/* Loading */}
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#652D8B" style={{ marginTop: 40 }} />
+        {isLoading || isFetching ? (
+                  <>
+                    <SkeletonCard />
+                    <SkeletonCard />
+                    <SkeletonCard />
+                  </>
+        
+                
         ) : (
           <FlatList
             data={orders}

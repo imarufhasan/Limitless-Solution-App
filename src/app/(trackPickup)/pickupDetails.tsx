@@ -12,6 +12,8 @@ export default function PickupDetails() {
   const [onTheWay, { isLoading: OTGLoading }] = useOnTheWayStatusMutation()
   const assignment = data?.data;
 
+
+
   useFocusEffect(
     useCallback(() => {
 
@@ -61,7 +63,7 @@ export default function PickupDetails() {
         assignment?.orderStatus === 'on_the_way' ? CheckCircle : Navigation
       }
       onPress={() => {
-        if (assignment?.orderStatus === 'on_the_way') {
+        if (assignment?.orderStatus === 'received') {
           handleMarkAsReceived();
         } else {
           handleChangeStatus(assignment?.orderId);

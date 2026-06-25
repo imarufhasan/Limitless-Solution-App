@@ -4,9 +4,9 @@ import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacit
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = {
-    buttonLabel: string;
-    buttonIcon: any;
-    onPress: () => void;
+    buttonLabel ?: string;
+    buttonIcon ? : any;
+    onPress ?: () => void;
     status?: string;
     showDecline?: boolean;
     onDecline?: () => void;

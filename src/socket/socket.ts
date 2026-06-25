@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const baseUrl = "http://10.10.28.73:5000";
+const baseUrl = "https://backend.tnpurple.com";
 
 let socket: Socket | null = null;
 
@@ -11,14 +11,14 @@ export function getSocket(): Socket | null {
 export function initSocket(token: string): Socket {
   if (socket?.connected) return socket;
 
-  // ✅ disconnect করে নতুন socket বানাও
+ 
   if (socket) {
     socket.disconnect();
     socket = null;
   }
 
   socket = io(baseUrl, {
-    auth: { token },          // ✅ query এর বদলে auth use করো (more secure)
+    auth: { token },        
     transports: ["websocket"],
     reconnection: true,
     reconnectionAttempts: 5,
