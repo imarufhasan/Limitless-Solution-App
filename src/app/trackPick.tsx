@@ -1,3 +1,4 @@
+import TrackPickupSkeleton from '@/components/Trackpickupskeleton';
 import { useGetOrderHistoryQuery } from '@/redux/features/orderApi';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, CheckCircle, MapPin, PhoneCall } from 'lucide-react-native';
@@ -44,7 +45,10 @@ export default function TrackPickup() {
     const pickUpData = data?.data
 
 
+
     const histories = [...(pickUpData?.histories || [])].reverse();
+
+     if (isLoading) return <TrackPickupSkeleton />
 
 
     return (
@@ -64,7 +68,7 @@ export default function TrackPickup() {
                         <Text style={{ fontFamily: "Inter_700Bold" }} className="text-xl">
                             Track Pickup
                         </Text>
-                        
+
                     </View>
                 </View>
                 {/* Header */}
@@ -93,13 +97,9 @@ export default function TrackPickup() {
                         style={{ elevation: 2 }}
                     >
                         <View className="flex-row items-center gap-3">
-                            {/* <Image
-                                source={require('@/assets/images/user.png')}
-                                style={{ width: 48, height: 48, borderRadius: 24 }}
-                            /> */}
                             <View>
                                 <Text style={{ fontFamily: "Inter_600SemiBold" }} className="text-sm text-[#0F0B18]">
-                                    {pickUpData?.employeeName}
+                                    {pickUpData?.employeeName ? pickUpData?.employeeName : "Employee Not Assigned"}
                                 </Text>
                                 <Text style={{ fontFamily: "Inter_400Regular" }} className="text-xs text-gray-400">
                                     Employee
@@ -107,10 +107,13 @@ export default function TrackPickup() {
                             </View>
                         </View>
                         <View className="flex-row gap-2">
-                           
-                            <TouchableOpacity onPress={() => Linking.openURL(`tel:${pickUpData?.employeePhoneNumber}`)} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
-                                <PhoneCall size={18} color="#652D8B" />
-                            </TouchableOpacity>
+                            {
+                                pickUpData?.employeePhoneNumber && <TouchableOpacity onPress={() => Linking.openURL(`tel:${pickUpData?.employeePhoneNumber}`)} className="w-10 h-10 rounded-full bg-purple-100 items-center justify-center">
+                                    <PhoneCall size={18} color="#652D8B" />
+                                </TouchableOpacity>
+                            }
+
+
                         </View>
                     </View>
 

@@ -1,7 +1,7 @@
 import AnimatedTabIcon from '@/components/shared/AnimatedTabIcon';
 import { useSocket } from '@/hooks/useSocket';
 import { Tabs } from 'expo-router';
-import { Home, Package, TrendingUp, User } from 'lucide-react-native';
+import { Calculator, Home, Package, TrendingUp, User } from 'lucide-react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -41,7 +41,7 @@ export default function UserTabs() {
             }} />
             <Tabs.Screen name="calculator" options={{
                 tabBarIcon: ({ color, size, focused }) => (
-                    <AnimatedTabIcon icon={Package} color={color} size={size} focused={focused} label="Calculator" />
+                    <AnimatedTabIcon icon={Calculator} color={color} size={size} focused={focused} label="Calculator" />
                 )
             }} />
             <Tabs.Screen name="market" options={{

@@ -19,7 +19,6 @@ export default function Carousel() {
 
     const GAP = 12;
 
-    // ✅ FIXED AUTO SLIDER (NO MEMORY LEAK)
     useEffect(() => {
         if (slides.length <= 1) return;
 

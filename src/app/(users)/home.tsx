@@ -47,7 +47,7 @@ const Home = () => {
         className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-row items-center justify-end mt-3">
+        <View className="flex-row items-center justify-end mt-1">
 
           <TouchableOpacity onPress={() => router.push("/notifications")}>
             <View className="bg-white rounded-full p-3 shadow-lg">

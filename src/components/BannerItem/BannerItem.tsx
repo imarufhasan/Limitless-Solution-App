@@ -10,11 +10,14 @@ type BannerItemProps = {
 export default function BannerItem({ image }: BannerItemProps) {
   const [imageLoading, setImageLoading] = useState(true);
 
+  const bannerWidth = width - 32;
+const bannerHeight = bannerWidth * 0.42;
+
   return (
     <View
       style={{
-        width: width - 32,
-        height: 130,
+        width: bannerWidth,
+        height: bannerHeight,
         marginRight: 12,
         borderRadius: 16,
         overflow: "hidden",
@@ -39,7 +42,7 @@ export default function BannerItem({ image }: BannerItemProps) {
           width: "100%",
           height: "100%",
         }}
-        resizeMode="contain"
+        resizeMode="cover"
         onLoadEnd={() => setImageLoading(false)}
       />
     </View>
