@@ -1,3 +1,4 @@
+import LogoutModal from '@/components/shared/LogoutModal';
 import { logout } from '@/redux/features/auth/authSlice';
 import { useCreateSupportConversationMutation } from '@/redux/features/socketApis/socketApi';
 import { useAppDispatch } from '@/redux/hooks';
@@ -5,12 +6,14 @@ import { persistor } from '@/redux/store';
 import { disconnectSocket } from '@/socket/socket';
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
+import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
 export default function Profile() {
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const dispatch = useAppDispatch();
   const [createSupportConversation, { isLoading }] = useCreateSupportConversationMutation({})
@@ -99,7 +102,7 @@ export default function Profile() {
 
         {/* Logout */}
         <TouchableOpacity
-          onPress={() => { handleLogout() }}
+          onPress={() => setLogoutModalVisible(true)}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -120,6 +123,14 @@ export default function Profile() {
             Logout
           </Text>
         </TouchableOpacity>
+        <LogoutModal
+          visible={logoutModalVisible}
+          onClose={() => setLogoutModalVisible(false)}
+          onConfirm={() => {
+            setLogoutModalVisible(false);
+            handleLogout();
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );

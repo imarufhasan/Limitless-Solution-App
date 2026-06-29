@@ -120,8 +120,8 @@ export default function Track() {
                   borderColor: '#F3F4F6',
                 }}>
                   {/* Top Row */}
-                  <View className="flex-row justify-between items-center mb-2">
-                    <Text style={{ fontFamily: "Inter_700Bold" }} className="text-base text-[#0F0B18]">
+                  <View className="flex-row justify-between gap-1 items-center mb-2">
+                    <Text style={{ fontFamily: "Inter_700Bold" }} className=" text-[#0F0B18]">
                       {item.orderNumber}
                     </Text>
                     <View style={{

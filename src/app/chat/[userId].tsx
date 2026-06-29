@@ -121,9 +121,7 @@ export default function ChatScreen() {
 
     const handleNewMessage = (res: any) => {
       const message = res?.data ?? res;
-      console.log('📩 RAW socket data:', JSON.stringify(message, null, 2)); // ✅ filter এর আগে
-      console.log('🆔 message.conversation:', message.conversation);
-      console.log('🆔 conversationId:', conversationId);
+     
       if (!message || message.conversation !== conversationId) return;
       const currentMyId = myIdRef.current;
       const newMsg: Message = {

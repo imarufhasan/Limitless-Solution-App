@@ -52,6 +52,8 @@ export default function Carousel() {
 
     if (!slides.length) return null;
 
+
+
     return (
         <View style={{ marginVertical: 10 }}>
             <View style={{ borderRadius: 20, overflow: "hidden" }}>

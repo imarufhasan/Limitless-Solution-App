@@ -1,3 +1,4 @@
+import LogoutModal from '@/components/shared/LogoutModal';
 import { logout } from '@/redux/features/auth/authSlice';
 import { useCreateSupportConversationMutation } from '@/redux/features/socketApis/socketApi';
 import { useAppDispatch } from '@/redux/hooks';
@@ -5,6 +6,7 @@ import { persistor } from '@/redux/store';
 import { disconnectSocket } from '@/socket/socket';
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
+import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,8 +15,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Profile() {
 
   const dispatch = useAppDispatch();
-    const [createSupportConversation, { isLoading }] = useCreateSupportConversationMutation({})
-  
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [createSupportConversation, { isLoading }] = useCreateSupportConversationMutation({})
+
 
   const menuItems = [
     { id: "1", title: "Profile Setting", icon: User, onPress: () => router.push("/(settings)/editProfile" as any) },
@@ -25,19 +28,19 @@ export default function Profile() {
     { id: "6", title: "Terms and Conditions", icon: ScrollText, onPress: () => router.push("/(settings)/termsCondition" as any) },
   ];
 
-    const handleSupport = async () => {
-      try {
-        const res = await createSupportConversation({}).unwrap();
-        router.push({
-          pathname: "/(settings)/support",
-          params: {
-            conversationId: res.data._id,
-          },
-        });
-      } catch (error) {
-      }
-    };
-  
+  const handleSupport = async () => {
+    try {
+      const res = await createSupportConversation({}).unwrap();
+      router.push({
+        pathname: "/(settings)/support",
+        params: {
+          conversationId: res.data._id,
+        },
+      });
+    } catch (error) {
+    }
+  };
+
 
   const handleLogout = async () => {
     await persistor.purge();
@@ -96,10 +99,7 @@ export default function Profile() {
 
         {/* Logout */}
         <TouchableOpacity
-          onPress={() => {
-            // Handle logout logic
-            handleLogout();
-          }}
+          onPress={() => setLogoutModalVisible(true)}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -119,6 +119,15 @@ export default function Profile() {
             Logout
           </Text>
         </TouchableOpacity>
+
+        <LogoutModal
+          visible={logoutModalVisible}
+          onClose={() => setLogoutModalVisible(false)}
+          onConfirm={() => {
+            setLogoutModalVisible(false);
+            handleLogout();
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
