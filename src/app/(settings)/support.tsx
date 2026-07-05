@@ -4,9 +4,10 @@ import { getSocket } from '@/socket/socket';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, Image as ImageIcon, Send } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 type Message = {
   id: string;
@@ -29,7 +30,7 @@ export default function Support() {
   const { data: profileData } = useGetProfileQuery({});
   const myId = profileData?.data?._id;
 
- 
+
 
   const { data: messagesData, refetch } = useGetConversationMessagesQuery(
     conversationId,
@@ -37,13 +38,14 @@ export default function Support() {
   );
 
   useFocusEffect(
-  useCallback(() => {
-    if (conversationId) {  
-      refetch()
-    }
-  }, [conversationId])  
-);
+    useCallback(() => {
+      if (conversationId) {
+        refetch()
+      }
+    }, [conversationId])
+  );
 
+  
   const restMessages: Message[] = (messagesData?.data?.messages || [])
     .map((msg: any) => ({
       id: msg._id,
@@ -54,12 +56,12 @@ export default function Support() {
       }),
       isMine: msg.senderId === myId,
       image: msg.attachments?.[0] || null
-    }))
-    .reverse();
+    }));
+
 
   const allMessages = [
-    ...restMessages,
     ...socketMessages.filter((sm) => !restMessages.some((rm) => rm.id === sm.id)),
+    ...restMessages,
   ];
 
   useEffect(() => {
@@ -86,10 +88,9 @@ export default function Support() {
 
       setSocketMessages((prev) => {
         if (prev.some((m) => m.id === newMsg.id)) return prev;
-        return [...prev, newMsg];
+        return [newMsg, ...prev];
       });
 
-      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     };
 
     const handleSocketError = (error: any) => console.log("Socket error:", error);
@@ -138,38 +139,48 @@ export default function Support() {
     }, 800);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      StatusBar.setBarStyle('light-content');
+      StatusBar.setBackgroundColor('#652D8B');
+
+      return () => {
+        StatusBar.setBarStyle('dark-content');
+        StatusBar.setBackgroundColor('#ffffff');
+      };
+    }, [])
+  );
+
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#652D8B' }} edges={['top']}>
       {/* Header */}
       <View className="bg-[#652D8B] px-4 py-3 flex-row items-center gap-3">
         <TouchableOpacity onPress={() => router.back()}>
           <ArrowLeft size={24} color="white" />
         </TouchableOpacity>
-        <Image
-          source={require('@/assets/images/user.png')}
-          style={{ width: 40, height: 40, borderRadius: 20 }}
-        />
+
         <View>
           <Text style={{ fontFamily: 'Inter_600SemiBold' }} className="text-white text-base">
-            Aarons
+            Support
           </Text>
           <Text style={{ fontFamily: 'Inter_400Regular' }} className="text-purple-200 text-xs">
-            Customer
+            admin
           </Text>
         </View>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }} behavior="padding">
         <FlatList
           ref={flatListRef}
           data={allMessages}
+          inverted
           style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
           contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16, gap: 8 }}
-          ListHeaderComponent={
+          
+          ListFooterComponent={
             <Text
               style={{ fontFamily: 'Inter_400Regular' }}
               className="text-xs text-gray-400 text-center mb-2"
@@ -186,11 +197,11 @@ export default function Support() {
                   : 'bg-white border border-gray-100 rounded-tl-sm'
                   }`}
               >
-               
+
                 {item.image && (
                   <Image
                     source={{ uri: item.image }}
-                    style={{ width: 200, height: 200,}}
+                    style={{ width: 200, height: 200, }}
                     resizeMode="cover"
                   />
                 )}
@@ -247,6 +258,6 @@ export default function Support() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }

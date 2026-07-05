@@ -187,7 +187,6 @@ export default function EmployeeHome() {
     : null;
 
 
-  console.log("current Assignment", currentAssignment)
   const nextTask = nextAssignment
     ? {
       id: nextAssignment._id,

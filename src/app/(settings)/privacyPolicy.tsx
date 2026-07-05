@@ -1,9 +1,12 @@
 import BackButton from '@/components/shared/BackButton'
+import { PrivacyPolicySkeleton } from '@/components/shared/PrivacyPolicySkeleton'
 import { useContentManagementQuery } from '@/redux/features/auth/authApi'
 import React from 'react'
-import { ActivityIndicator, ScrollView, useWindowDimensions, View } from 'react-native'
+import { ScrollView, useWindowDimensions, View } from 'react-native'
 import RenderHtml from 'react-native-render-html'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+
 export default function PrivacyPolicy() {
 
   const { data, isLoading } = useContentManagementQuery("privacy_policy")
@@ -12,14 +15,7 @@ export default function PrivacyPolicy() {
   // 
    if (isLoading) {
     return (
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: '#F8F6FA' }}
-        edges={['top']}
-      >
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#652D8B" />
-        </View>
-      </SafeAreaView>
+     <PrivacyPolicySkeleton/>
     );
   }
 

@@ -32,6 +32,7 @@ type Message = {
 
 export default function ChatScreen() {
   const { userId, name } = useLocalSearchParams<{ userId: string; name: string }>();
+
   const conversationId = userId;
   const insets = useSafeAreaInsets();
   const flatListRef = useRef<any>(null);
@@ -43,7 +44,7 @@ export default function ChatScreen() {
   const [isTyping, setIsTyping] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState<'online' | 'offline'>('offline');
 
-  // ✅ নতুন state — image preview ও uploading
+  //  image preview  uploading
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -56,7 +57,7 @@ export default function ChatScreen() {
     { skip: !conversationId }
   );
 
-  // ✅ RTK mutation
+  //  RTK mutation
   const [uploadAttachment] = useUploadAttachmentMutation();
 
   const token = useSelector((state: any) => state.auth.token);

@@ -7,7 +7,7 @@ import { disconnectSocket } from '@/socket/socket';
 import { router } from 'expo-router';
 import { ChevronRight, Globe, HelpCircle, Lock, LogOut, ScrollText, Shield, User } from 'lucide-react-native';
 import { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -37,7 +37,8 @@ export default function Profile() {
           conversationId: res.data._id,
         },
       });
-    } catch (error) {
+    } 
+    catch (error) {
     }
   };
 
@@ -76,6 +77,7 @@ export default function Profile() {
               <TouchableOpacity
                 key={item.id}
                 onPress={item.onPress}
+                disabled={item.id === "3" && isLoading}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -91,7 +93,11 @@ export default function Profile() {
                 >
                   {item.title}
                 </Text>
-                <ChevronRight size={25} color="#0F0B18" />
+                {item.id === "3" && isLoading ? (
+                  <ActivityIndicator size="small" color="#652D8B" />
+                ) : (
+                  <ChevronRight size={25} color="#0F0B18" />
+                )}
               </TouchableOpacity>
             );
           })}

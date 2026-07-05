@@ -9,7 +9,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
 export default function Chat() {
-  const { data, isLoading , isFetching } = useGetMyConversationQuery({});
+  const { data, isLoading, isFetching } = useGetMyConversationQuery({});
   const [search, setSearch] = useState("");
 
   useFocusEffect(
@@ -46,7 +46,7 @@ export default function Chat() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F8F6FA' }} edges={['bottom']} >
       {/* Header */}
       <View style={{
         backgroundColor: '#652D8B',
@@ -87,17 +87,20 @@ export default function Chat() {
       </View>
 
       {/* List */}
-      { isLoading || isFetching ? (
-        <>
+      {isLoading || isFetching ? (
+       
+        <View style={{ flex: 1 }}>
           <ChatSkeletonCard />
           <ChatSkeletonCard />
           <ChatSkeletonCard />
           <ChatSkeletonCard />
           <ChatSkeletonCard />
-        </>
+        </View>
       ) : (
         <FlatList
           data={filtered}
+     
+          style={{ flex: 1 }}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 20 }}
@@ -112,7 +115,7 @@ export default function Chat() {
             <TouchableOpacity
               onPress={() => router.push({
                 pathname: `/chat/[userId]`,
-                params: { userId: item.id }
+                params: { userId: item.id, name: item?.name }
               } as any)}
               style={{
                 backgroundColor: 'white',
