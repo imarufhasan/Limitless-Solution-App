@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "342968677528",
+    "project_id": "limitless-aa863",
+    "storage_bucket": "limitless-aa863.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342968677528:android:c620b1d637320d4cc78ced",
+        "android_client_info": {
+          "package_name": "com.shukumar.limitlessSolution"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGhMDry9oOKgZJSXLuC7EiUORvpqe0fiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

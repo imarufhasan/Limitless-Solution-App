@@ -10,15 +10,16 @@
     "ios": {
       "icon": "./assets/expo.icon"
     },
-    
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
-        "foregroundImage": "./assets/images/appIco_foreground.png"
+        "foregroundImage": "./assets/images/logicon.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.shukumar.LimitlessSolution"
+      "package": "com.shukumar.limitlessSolution",
+      "googleServicesFile": "./google-services.json",
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "output": "static",
@@ -31,17 +32,27 @@
         {
           "backgroundColor": "#FFFFFF",
           "android": {
-            "image": "./assets/images/appIco_foreground.png",
+            "image": "./assets/images/logicon.png",
             "imageWidth": 76
           }
         }
       ],
       "expo-font",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-image",
+      "expo-web-browser",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c703553b-8a4a-46da-a8a4-d1c396e0d31e"
+      }
     }
   }
 }
