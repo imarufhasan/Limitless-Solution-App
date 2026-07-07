@@ -1,4 +1,5 @@
 import { useRegisterFcmTokenMutation } from "@/redux/features/home/fcmApi";
+import { useAppSelector } from "@/redux/hooks";
 import messaging from "@react-native-firebase/messaging";
 import * as Notifications from "expo-notifications";
 import React, {
@@ -43,9 +44,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [notification, setNotification] =
     useState<Notifications.Notification | null>(null);
   const [error, setError] = useState<Error | null>(null);
-
   const [registerFcmToken] = useRegisterFcmTokenMutation();
   const lastRegisteredTokenRef = useRef<string | null>(null);
+  const authToken = useAppSelector((state) => state.auth.token); // ✅ add this
 
   const deviceType: "android" | "ios" | "web" =
     Platform.OS === "android"
@@ -55,37 +56,33 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
         : "web";
 
   const sendTokenToBackend = async (token: string) => {
-    if (!token || lastRegisteredTokenRef.current === token) return;
+    if (!token || !authToken) return; // ✅ block if user not logged in yet
+    if (lastRegisteredTokenRef.current === token) return;
     lastRegisteredTokenRef.current = token;
     try {
       await registerFcmToken({ token, deviceType }).unwrap();
-      console.log("✅ FCM token registered with backend");
+      console.log("✅ FCM token registered with backend: ", token);
     } catch (err) {
       console.log("❌ FCM token register API failed: ", err);
+      lastRegisteredTokenRef.current = null; // ✅ allow retry on failure
     }
   };
 
   useEffect(() => {
-    // ✅ FCM Token নাও
     registerForPushNotificationsAsync()
       .then((token) => {
-        console.log("✅ FCM Token in context 4: ", token);
         setFcmToken(token);
         if (token) sendTokenToBackend(token);
       })
       .catch((err) => {
-        console.log("❌ FCM Token error 5: ", err);
         setError(err);
       });
 
-    // ✅ Token refresh হলে আপডেট নাও
     const unsubscribeTokenRefresh = messaging().onTokenRefresh((newToken) => {
-      console.log("🔄 FCM Token refreshed 6: ", newToken);
       setFcmToken(newToken);
       sendTokenToBackend(newToken);
     });
 
-    // ✅ Foreground notification listener (expo)
     const notificationListener = Notifications.addNotificationReceivedListener(
       (notification) => {
         console.log("🔔 Expo Foreground Notification3: ", notification);
@@ -119,6 +116,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       responseListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (authToken && fcmToken) {
+      sendTokenToBackend(fcmToken);
+    }
+  }, [authToken]);
 
   return (
     <NotificationContext.Provider value={{ fcmToken, notification, error }}>
