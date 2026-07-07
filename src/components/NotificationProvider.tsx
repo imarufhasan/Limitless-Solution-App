@@ -118,6 +118,24 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   }, []);
 
   useEffect(() => {
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log("🚀 Opened from quit state:", remoteMessage);
+        }
+      });
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log("📲 Opened from background:", remoteMessage);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
     if (authToken && fcmToken) {
       sendTokenToBackend(fcmToken);
     }
