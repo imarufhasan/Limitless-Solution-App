@@ -8,7 +8,9 @@
     "scheme": "limitlesssolution",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.shukumar.limitlessSolution",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
